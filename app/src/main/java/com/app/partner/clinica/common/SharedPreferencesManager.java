@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.app.partner.clinica.models.request.Empleado;
+import com.app.partner.clinica.models.request.Pagina;
 import com.app.partner.clinica.models.response.ResponseToken;
 import com.google.gson.Gson;
 
@@ -66,5 +67,16 @@ public class SharedPreferencesManager {
     public static Empleado getPrefEmpleado() {
         String json = getSharedPreferences().getString(Constantes.KEY_EMPLEADO, null);
         return new Gson().fromJson(json, Empleado.class);
+    }
+
+    public static void setPreferences(Pagina pagina) {
+        SharedPreferences.Editor edit = getSharedPreferences().edit();
+        String json = new Gson().toJson(pagina);
+        edit.putString(Constantes.KEY_PAGINA, json).commit();
+    }
+
+    public static Pagina getPrefPagina() {
+        String json = getSharedPreferences().getString(Constantes.KEY_PAGINA, null);
+        return new Gson().fromJson(json, Pagina.class);
     }
 }

@@ -46,8 +46,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginTop="10dp"
-        android:text="@string/txtPaciente"
         android:fontFamily="@font/roboto"
+        android:text="@string/txtPaciente"
         android:textColor="@color/colorAccent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewCitaBarra" />
@@ -89,12 +89,12 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:fontFamily="@font/roboto"
         android:text="@string/txtNota"
         android:textColor="@color/colorAccent"
-        app:layout_constraintStart_toStartOf="@+id/edtCitaHora"
-        app:layout_constraintTop_toBottomOf="@+id/edtCitaHora" />
+        app:layout_constraintStart_toStartOf="@+id/linearLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
     <EditText
         android:id="@+id/editTextTextMultiLine"
@@ -112,55 +112,72 @@
         app:layout_constraintStart_toStartOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:fontFamily="@font/roboto"
-        android:text="@string/txtFecha"
-        android:textColor="@color/colorAccent"
-        app:layout_constraintStart_toStartOf="@+id/edtPacienteNombre"
-        app:layout_constraintTop_toBottomOf="@+id/edtPacienteNombre" />
-
-    <EditText
-        android:id="@+id/edtCitaFecha"
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:background="@drawable/input"
-        android:enabled="true"
-        android:focusable="false"
-        android:hint="@string/hintFecha"
-        android:inputType="textPersonName"
-        android:padding="10dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="@+id/edtPacienteNombre"
-        app:layout_constraintStart_toStartOf="@+id/textView3"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/edtPacienteNombre"
+        app:layout_constraintTop_toBottomOf="@+id/edtPacienteNombre">
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:fontFamily="@font/roboto"
-        android:text="@string/txtHora"
-        android:textColor="@color/colorAccent"
-        app:layout_constraintStart_toStartOf="@+id/edtCitaFecha"
-        app:layout_constraintTop_toBottomOf="@+id/edtCitaFecha" />
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:fontFamily="@font/roboto"
+            android:text="@string/txtFecha"
+            android:textColor="@color/colorAccent" />
 
-    <EditText
-        android:id="@+id/edtCitaHora"
-        android:layout_width="0dp"
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:fontFamily="@font/roboto"
+            android:text="@string/txtHora"
+            android:textColor="@color/colorAccent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="1dp"
-        android:background="@drawable/input"
-        android:enabled="true"
-        android:focusable="false"
-        android:hint="@string/hintHora"
-        android:inputType="textPersonName"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/edtCitaFecha"
-        app:layout_constraintStart_toStartOf="@+id/textView4"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        android:layout_marginEnd="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <EditText
+            android:id="@+id/edtCitaFecha"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="2dp"
+            android:layout_weight="0.5"
+            android:background="@drawable/input"
+            android:enabled="true"
+            android:focusable="false"
+            android:hint="@string/hintFecha"
+            android:inputType="textPersonName"
+            android:padding="10dp" />
+
+        <EditText
+            android:id="@+id/edtCitaHora"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="0.5"
+            android:background="@drawable/input"
+            android:enabled="true"
+            android:focusable="false"
+            android:hint="@string/hintHora"
+            android:inputType="textPersonName"
+            android:padding="10dp" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

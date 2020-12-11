@@ -7,6 +7,7 @@ import android.view.animation.RotateAnimation;
 import android.view.animation.Transformation;
 
 import com.app.partner.clinica.models.request.Empleado;
+import com.app.partner.clinica.models.request.Pagina;
 
 public class Constantes {
 
@@ -24,8 +25,12 @@ public class Constantes {
 
     //Objetos
     public static final String KEY_EMPLEADO = "KEY_EMPLEADO";
+    public static final String KEY_PAGINA = "KEY_PAGINA";
     public static final String KEY_RESPONSE_TOKEN = "KEY_RESPONSE_TOKEN";
 
+    //URL_PAGINAS
+    public static final String URL_CITAS = "/citas";
+    public static final String URL_ASISTENCIA = "/asistencia";
 
     public static void expandir(final View v) {
         int matchParentMeasureSpec = View.MeasureSpec.makeMeasureSpec(((View) v.getParent()).getWidth(), View.MeasureSpec.EXACTLY);
@@ -100,12 +105,13 @@ public class Constantes {
     }
 
     public static void limpiarSharedPreferenes() {
-//        SharedPreferencesManager.setPreferences(KEY_USER, null);
-//        SharedPreferencesManager.setPreferences(KEY_PASSWORD, null);
-//        SharedPreferencesManager.setPreferences(KEY_TOKEN, null);
-//        SharedPreferencesManager.setPreferences(KEY_REFRESH_TOKEN, null);
-//        SharedPreferencesManager.setPreferences(KEY_RECORDAR, false);
-//        SharedPreferencesManager.setPreferences((Empleado) null);
+        SharedPreferencesManager.setPreferences(KEY_USER, null);
+        SharedPreferencesManager.setPreferences(KEY_PASSWORD, null);
+        SharedPreferencesManager.setPreferences(KEY_TOKEN, null);
+        SharedPreferencesManager.setPreferences(KEY_REFRESH_TOKEN, null);
+        SharedPreferencesManager.setPreferences(KEY_RECORDAR, false);
+        SharedPreferencesManager.setPreferences((Empleado) null);
+        SharedPreferencesManager.setPreferences((Pagina) null);
     }
 
     public static String retornarMes(int i) {

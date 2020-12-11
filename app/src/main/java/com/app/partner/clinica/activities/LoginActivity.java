@@ -20,11 +20,11 @@ import com.app.partner.clinica.common.SharedPreferencesManager;
 import com.app.partner.clinica.models.request.AgrupadorModulos;
 import com.app.partner.clinica.models.request.Empleado;
 import com.app.partner.clinica.models.request.Modulo;
+import com.app.partner.clinica.models.request.Pagina;
 import com.app.partner.clinica.models.response.ResponseAgrupadorModulos;
 import com.app.partner.clinica.models.response.ResponseEmpleado;
 import com.app.partner.clinica.models.response.ResponseModulo;
 import com.app.partner.clinica.models.response.ResponseToken;
-import com.app.partner.clinica.models.response.ResponseWrapper;
 import com.app.partner.clinica.services.instance.IAgrupadorModulos;
 import com.app.partner.clinica.services.instance.IEmpleado;
 import com.app.partner.clinica.services.instance.IToken;
@@ -120,12 +120,12 @@ public class LoginActivity extends AppCompatActivity {
 
                     SharedPreferencesManager.setPreferences(Constantes.KEY_TOKEN, resp.getAccess_token());
                     SharedPreferencesManager.setPreferences(Constantes.KEY_REFRESH_TOKEN, resp.getRefresh_token());
+
                     listarAgrupadorModulos();
-                    login();
+                    getEmpleado();
                 } else {
                     Toast.makeText(LoginActivity.this, "Verifique que su usuario o contraseña sean correctos", Toast.LENGTH_SHORT).show();
                 }
-                btnIngresar.setEnabled(true);
             }
 
             @Override
@@ -136,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void login() {
+    private void getEmpleado() {
         Call<ResponseEmpleado> call = sEmpleado.getUser();
         call.enqueue(new Callback<ResponseEmpleado>() {
             @Override
@@ -144,9 +144,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Empleado empleado = (Empleado) response.body().getDefaultObj();
                     SharedPreferencesManager.setPreferences(empleado);
-                    Intent login = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(login);
-                    finish();
                 } else {
                     Toast.makeText(LoginActivity.this, "ERROR INTERNO", Toast.LENGTH_SHORT).show();
                 }
@@ -159,14 +156,14 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void listarAgrupadorModulos(){
+    private void listarAgrupadorModulos() {
         AgrupadorModulos agrupadorModulos = new AgrupadorModulos();
         agrupadorModulos.setAccion("1");
         Call<ResponseAgrupadorModulos> call = sAgrupadorModulos.getAgrupadormodulos(agrupadorModulos);
         call.enqueue(new Callback<ResponseAgrupadorModulos>() {
             @Override
             public void onResponse(Call<ResponseAgrupadorModulos> call, Response<ResponseAgrupadorModulos> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     AgrupadorModulos resp = response.body().getAaData().get(0);
                     retornarAcceso(resp);
                 } else {
@@ -176,30 +173,61 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseAgrupadorModulos> call, Throwable t) {
+                btnIngresar.setEnabled(true);
                 Toast.makeText(LoginActivity.this, "SUPER ERROR INTERNO: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
 
-    private void retornarAcceso(AgrupadorModulos agrupadorModulos){
-
+    private void retornarAcceso(AgrupadorModulos agrupadorModulos) {
         Call<ResponseModulo> call = sEmpleado.retornarAcceso(agrupadorModulos);
         call.enqueue(new Callback<ResponseModulo>() {
             @Override
             public void onResponse(Call<ResponseModulo> call, Response<ResponseModulo> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     List<Modulo> lsModulo = response.body().getAaData();
-                    System.out.println(lsModulo);
+                    if (lsModulo.size() > 0) {
+                        Pagina pagina = lsModulo.get(0).getLsPaginas().get(0);
+                        if (pagina != null) {
+                            if (validarPagina(pagina)) {
+                                SharedPreferencesManager.setPreferences(pagina);
+
+                                Intent main = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(main);
+                                finish();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "No cuenta con alguna página asignada", Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            Toast.makeText(LoginActivity.this, "No cuenta con alguna página asignada", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(LoginActivity.this, "NO CUENTA CON PERMISOS PARA INGRESAR A LA APP", Toast.LENGTH_SHORT).show();
+                    }
+
                 } else {
                     Toast.makeText(LoginActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
                 }
+                btnIngresar.setEnabled(true);
             }
 
             @Override
             public void onFailure(Call<ResponseModulo> call, Throwable t) {
+                btnIngresar.setEnabled(true);
                 Toast.makeText(LoginActivity.this, "SUPER ERROR INTERNO: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private boolean validarPagina(Pagina pagina) {
+        switch (pagina.getUrl()) {
+            case Constantes.URL_CITAS:
+                return true;
+            case Constantes.URL_ASISTENCIA:
+                return true;
+            default:
+                return false;
+        }
     }
 }

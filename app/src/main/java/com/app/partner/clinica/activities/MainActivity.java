@@ -20,6 +20,7 @@ import com.app.partner.clinica.common.SharedPreferencesManager;
 import com.app.partner.clinica.fragments.AsistenciaFragment;
 import com.app.partner.clinica.fragments.HorarioFragment;
 import com.app.partner.clinica.models.request.Empleado;
+import com.app.partner.clinica.models.request.Pagina;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -44,8 +45,8 @@ public class MainActivity extends AppCompatActivity implements AsistenciaFragmen
 //        Toolbar toolbar = findViewById(R.id.toolbarMain);
 //        setSupportActionBar(toolbar);
 
-        Empleado empleado = SharedPreferencesManager.getPrefEmpleado();
-        Toast.makeText(this, "Hola " + empleado.getNombres(), Toast.LENGTH_LONG).show();
+//        Empleado empleado = SharedPreferencesManager.getPrefEmpleado();
+//        Toast.makeText(this, "Hola " + empleado.getNombres(), Toast.LENGTH_LONG).show();
 
         obtenerViews();
         buttonNavView();
@@ -94,34 +95,47 @@ public class MainActivity extends AppCompatActivity implements AsistenciaFragmen
         btnNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                    Fragment fragment  = null;
-                    switch (menuItem.getItemId()) {
-                        case R.id.navHorario:
-                            if (horarioFragment == null){
-                                horarioFragment = new HorarioFragment();
-                            }
-                            fragment = horarioFragment;
-                            break;
-                        case R.id.navAsistencia:
-                            if (asistenciaFragment == null) {
-                                asistenciaFragment = new AsistenciaFragment();
-                            }
-                            fragment = asistenciaFragment;
-                            break;
-                    }
-                    cambiarFragment(fragment);
+                Fragment fragment = null;
+                switch (menuItem.getItemId()) {
+                    case R.id.navHorario:
+                        if (horarioFragment == null) {
+                            horarioFragment = new HorarioFragment();
+                        }
+                        fragment = horarioFragment;
+                        break;
+                    case R.id.navAsistencia:
+                        if (asistenciaFragment == null) {
+                            asistenciaFragment = new AsistenciaFragment();
+                        }
+                        fragment = asistenciaFragment;
+                        break;
+                }
+                cambiarFragment(fragment);
                 return true;
             }
         });
     }
 
     private void setFragmentDefecto() {
-        if (SharedPreferencesManager.getPrefBoolean(Constantes.KEY_RECORDAR)) {
-            horarioFragment = new HorarioFragment();
-            cambiarFragment(horarioFragment);
-        } else {
-            asistenciaFragment = new AsistenciaFragment();
-            cambiarFragment(asistenciaFragment);
+        //     /citas
+        //     /asistencia
+        Pagina accessPagina = SharedPreferencesManager.getPrefPagina();
+
+        switch (accessPagina.getUrl()) {
+            case Constantes.URL_CITAS:
+                horarioFragment = new HorarioFragment();
+                cambiarFragment(horarioFragment);
+                break;
+            case Constantes.URL_ASISTENCIA:
+                asistenciaFragment = new AsistenciaFragment();
+                cambiarFragment(asistenciaFragment);
+                break;
+            default:
+                Toast.makeText(this, "No cuenta con alguna página asignada", Toast.LENGTH_LONG).show();
+                SharedPreferencesManager.setPreferences((Pagina) null);
+                Intent login = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(login);
+                finish();
         }
     }
 

@@ -34,7 +34,9 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
         retrofitInit();
 
-        if (SharedPreferencesManager.getPrefBoolean(Constantes.KEY_RECORDAR)) {
+        if (SharedPreferencesManager.getPrefPagina() == null) {
+            irLogin();
+        } else if (SharedPreferencesManager.getPrefBoolean(Constantes.KEY_RECORDAR)) {
             getToken();
         } else {
             irLogin();
