@@ -1,5 +1,6 @@
 package com.app.partner.clinica.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,10 +8,15 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.partner.clinica.R;
+import com.app.partner.clinica.activities.LoginActivity;
+import com.app.partner.clinica.common.Constantes;
+import com.app.partner.clinica.common.SharedPreferencesManager;
+import com.app.partner.clinica.models.request.Empleado;
 import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.EventDay;
 import com.applandeo.materialcalendarview.listeners.OnCalendarPageChangeListener;
@@ -24,6 +30,7 @@ public class HorarioFragment extends Fragment {
 
     CalendarView cldHorario;
     TextView txtDia, txtMes, txtAnno;
+    ImageView imgCerrarSesion;
     List<EventDay> lsEventos = new ArrayList<>();
 
     public HorarioFragment() {
@@ -35,6 +42,7 @@ public class HorarioFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_horario, container, false);
         obtenerViews(view);
+        eventosViews();
         Calendar calendar = Calendar.getInstance();
         settearFecha(calendar);
 
@@ -42,20 +50,17 @@ public class HorarioFragment extends Fragment {
         return view;
     }
 
-    private void agregarEventos(Calendar fecha) {
-        for (int i = 1; i < 10; i++) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(fecha.get(Calendar.YEAR), fecha.get(Calendar.MONTH), i);
-            lsEventos.add(new EventDay(calendar, R.drawable.btn_redondeado));
-        }
-        cldHorario.setEvents(lsEventos);
-    }
+    private void eventosViews() {
 
-    private void obtenerViews(View view) {
-        txtDia = view.findViewById(R.id.txtDia);
-        txtMes = view.findViewById(R.id.txtMes);
-        txtAnno = view.findViewById(R.id.txtAnno);
-        cldHorario = (CalendarView) view.findViewById(R.id.cldHorario);
+        imgCerrarSesion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Constantes.limpiarSharedPreferenes();
+                Intent login = new Intent(getContext(), LoginActivity.class);
+                startActivity(login);
+                getActivity().finish();
+            }
+        });
 
         cldHorario.setOnDayClickListener(new OnDayClickListener() {
             @Override
@@ -87,6 +92,23 @@ public class HorarioFragment extends Fragment {
         });
     }
 
+    private void agregarEventos(Calendar fecha) {
+        for (int i = 1; i < 10; i++) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(fecha.get(Calendar.YEAR), fecha.get(Calendar.MONTH), i);
+            lsEventos.add(new EventDay(calendar, R.drawable.btn_redondeado));
+        }
+        cldHorario.setEvents(lsEventos);
+    }
+
+    private void obtenerViews(View view) {
+        txtDia = view.findViewById(R.id.txtDia);
+        txtMes = view.findViewById(R.id.txtMes);
+        txtAnno = view.findViewById(R.id.txtAnno);
+        imgCerrarSesion = view.findViewById(R.id.imgCerrarSesion);
+        cldHorario = (CalendarView) view.findViewById(R.id.cldHorario);
+    }
+
     private boolean existeEvento(Calendar calendar) {
         for (EventDay evento : lsEventos) {
             if (evento.getCalendar() == calendar) {
@@ -97,7 +119,7 @@ public class HorarioFragment extends Fragment {
     }
 
     private void settearFecha(Calendar fecha) {
-        txtMes.setText(retornarMes(fecha.get(Calendar.MONTH)));
+        txtMes.setText(Constantes.retornarMes(fecha.get(Calendar.MONTH)));
         txtDia.setText(retornarDia(fecha.get(Calendar.DAY_OF_MONTH)));
         txtAnno.setText(String.valueOf(fecha.get(Calendar.YEAR)));
     }
@@ -109,32 +131,5 @@ public class HorarioFragment extends Fragment {
         return "" + i;
     }
 
-    private String retornarMes(int i) {
-        switch (i) {
-            case 0:
-                return "ENE";
-            case 1:
-                return "FEB";
-            case 2:
-                return "MAR";
-            case 3:
-                return "ABR";
-            case 4:
-                return "MAY";
-            case 5:
-                return "JUN";
-            case 6:
-                return "JUL";
-            case 7:
-                return "AGO";
-            case 8:
-                return "SEP";
-            case 9:
-                return "OCT";
-            case 10:
-                return "NOV";
-            default:
-                return "DIC";
-        }
-    }
+
 }

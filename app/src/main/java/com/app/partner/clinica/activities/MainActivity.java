@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.partner.clinica.R;
+import com.app.partner.clinica.common.Constantes;
 import com.app.partner.clinica.common.SharedPreferencesManager;
 import com.app.partner.clinica.fragments.AsistenciaFragment;
 import com.app.partner.clinica.fragments.HorarioFragment;
@@ -27,10 +28,7 @@ import com.google.zxing.integration.android.IntentResult;
 public class MainActivity extends AppCompatActivity implements AsistenciaFragment.AsistenciaFragmentListener {
 
     public BottomNavigationView btnNav;
-    public Fragment fragment;
-
-    private Fragment horarioFragment;
-    private Fragment asistenciaFragment;
+    private Fragment horarioFragment, asistenciaFragment;
 
     public String qr = "";
 
@@ -76,16 +74,16 @@ public class MainActivity extends AppCompatActivity implements AsistenciaFragmen
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
-        if (result != null) {
-            if (result.getContents() == null) {
-                btnNav.setSelectedItemId(R.id.navHorario);
-                Toast.makeText(this, "Cancelado", Toast.LENGTH_LONG).show();
-            } else {
-                this.qr = result.getContents();
-            }
-        } else {
-            btnNav.setSelectedItemId(R.id.navHorario);
-        }
+//        if (result != null) {
+//            if (result.getContents() == null) {
+//                btnNav.setSelectedItemId(R.id.navHorario);
+//                Toast.makeText(this, "Cancelado", Toast.LENGTH_LONG).show();
+//            } else {
+//                this.qr = result.getContents();
+//            }
+//        } else {
+//            btnNav.setSelectedItemId(R.id.navHorario);
+//        }
     }
 
     private void obtenerViews() {
@@ -96,9 +94,12 @@ public class MainActivity extends AppCompatActivity implements AsistenciaFragmen
         btnNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                    fragment = null;
+                    Fragment fragment  = null;
                     switch (menuItem.getItemId()) {
                         case R.id.navHorario:
+                            if (horarioFragment == null){
+                                horarioFragment = new HorarioFragment();
+                            }
                             fragment = horarioFragment;
                             break;
                         case R.id.navAsistencia:
@@ -115,8 +116,13 @@ public class MainActivity extends AppCompatActivity implements AsistenciaFragmen
     }
 
     private void setFragmentDefecto() {
-        horarioFragment = new HorarioFragment();
-        cambiarFragment(horarioFragment);
+        if (SharedPreferencesManager.getPrefBoolean(Constantes.KEY_RECORDAR)) {
+            horarioFragment = new HorarioFragment();
+            cambiarFragment(horarioFragment);
+        } else {
+            asistenciaFragment = new AsistenciaFragment();
+            cambiarFragment(asistenciaFragment);
+        }
     }
 
     public void cambiarFragment(Fragment fragment) {

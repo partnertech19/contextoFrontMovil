@@ -17,14 +17,22 @@ import android.widget.Toast;
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.common.Constantes;
 import com.app.partner.clinica.common.SharedPreferencesManager;
+import com.app.partner.clinica.models.request.AgrupadorModulos;
 import com.app.partner.clinica.models.request.Empleado;
+import com.app.partner.clinica.models.request.Modulo;
+import com.app.partner.clinica.models.response.ResponseAgrupadorModulos;
 import com.app.partner.clinica.models.response.ResponseEmpleado;
+import com.app.partner.clinica.models.response.ResponseModulo;
 import com.app.partner.clinica.models.response.ResponseToken;
 import com.app.partner.clinica.models.response.ResponseWrapper;
+import com.app.partner.clinica.services.instance.IAgrupadorModulos;
 import com.app.partner.clinica.services.instance.IEmpleado;
 import com.app.partner.clinica.services.instance.IToken;
+import com.app.partner.clinica.services.service.AgrupadorModulosService;
 import com.app.partner.clinica.services.service.EmpleadoService;
 import com.app.partner.clinica.services.service.TokenService;
+
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -36,6 +44,8 @@ public class LoginActivity extends AppCompatActivity {
     TokenService sToken;
     IEmpleado iEmpleado;
     EmpleadoService sEmpleado;
+    IAgrupadorModulos iAgrupadorModulos;
+    AgrupadorModulosService sAgrupadorModulos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +57,8 @@ public class LoginActivity extends AppCompatActivity {
         eventosViews();
 
         if (SharedPreferencesManager.getPrefBoolean(Constantes.KEY_RECORDAR)) {
-            String user = SharedPreferencesManager.getPrefString(Constantes.KEY_USER);
-            String password = SharedPreferencesManager.getPrefString(Constantes.KEY_PASSWORD);
-            edtUsuario.setText(user);
-            edtPassword.setText(password);
+            edtUsuario.setText(SharedPreferencesManager.getPrefString(Constantes.KEY_USER));
+            edtPassword.setText(SharedPreferencesManager.getPrefString(Constantes.KEY_PASSWORD));
         }
     }
 
@@ -60,6 +68,9 @@ public class LoginActivity extends AppCompatActivity {
 
         iEmpleado = IEmpleado.getInstance();
         sEmpleado = iEmpleado.getEmpleadoService();
+
+        iAgrupadorModulos = IAgrupadorModulos.getInstance();
+        sAgrupadorModulos = iAgrupadorModulos.getAgrupadorModulosService();
     }
 
     private void obtenerViews() {
@@ -109,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     SharedPreferencesManager.setPreferences(Constantes.KEY_TOKEN, resp.getAccess_token());
                     SharedPreferencesManager.setPreferences(Constantes.KEY_REFRESH_TOKEN, resp.getRefresh_token());
+                    listarAgrupadorModulos();
                     login();
                 } else {
                     Toast.makeText(LoginActivity.this, "Verifique que su usuario o contraseña sean correctos", Toast.LENGTH_SHORT).show();
@@ -132,8 +144,8 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Empleado empleado = (Empleado) response.body().getDefaultObj();
                     SharedPreferencesManager.setPreferences(empleado);
-                    Intent loguin = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(loguin);
+                    Intent login = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(login);
                     finish();
                 } else {
                     Toast.makeText(LoginActivity.this, "ERROR INTERNO", Toast.LENGTH_SHORT).show();
@@ -142,6 +154,50 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseEmpleado> call, Throwable t) {
+                Toast.makeText(LoginActivity.this, "SUPER ERROR INTERNO: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void listarAgrupadorModulos(){
+        AgrupadorModulos agrupadorModulos = new AgrupadorModulos();
+        agrupadorModulos.setAccion("1");
+        Call<ResponseAgrupadorModulos> call = sAgrupadorModulos.getAgrupadormodulos(agrupadorModulos);
+        call.enqueue(new Callback<ResponseAgrupadorModulos>() {
+            @Override
+            public void onResponse(Call<ResponseAgrupadorModulos> call, Response<ResponseAgrupadorModulos> response) {
+                if (response.isSuccessful()){
+                    AgrupadorModulos resp = response.body().getAaData().get(0);
+                    retornarAcceso(resp);
+                } else {
+                    Toast.makeText(LoginActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAgrupadorModulos> call, Throwable t) {
+                Toast.makeText(LoginActivity.this, "SUPER ERROR INTERNO: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void retornarAcceso(AgrupadorModulos agrupadorModulos){
+
+        Call<ResponseModulo> call = sEmpleado.retornarAcceso(agrupadorModulos);
+        call.enqueue(new Callback<ResponseModulo>() {
+            @Override
+            public void onResponse(Call<ResponseModulo> call, Response<ResponseModulo> response) {
+                if (response.isSuccessful()){
+                    List<Modulo> lsModulo = response.body().getAaData();
+                    System.out.println(lsModulo);
+                } else {
+                    Toast.makeText(LoginActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseModulo> call, Throwable t) {
                 Toast.makeText(LoginActivity.this, "SUPER ERROR INTERNO: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

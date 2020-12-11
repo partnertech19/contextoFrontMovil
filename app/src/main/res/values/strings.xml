@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Clinica</string>
+    <string name="app_name">Contexto</string>
     <string name="txtIniciarSesion">Iniciar Sesión</string>
     <string name="txtUsuario">Usuario:</string>
     <string name="txtPassword">Contraseña:</string>
