@@ -11,7 +11,7 @@ import com.app.partner.clinica.models.request.Pagina;
 
 public class Constantes {
 
-    public static final String URL_BACK = "http://64.227.109.195:8083/";
+    public static final String URL_BACK = "http://64.227.109.195:7201/";
 //    public static final String URL_BACK = "http://localhost:8083/";
     public static final String KEY_TOKEN = "KEY_TOKEN";
     public static final String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
@@ -105,13 +105,13 @@ public class Constantes {
     }
 
     public static void limpiarSharedPreferenes() {
-        SharedPreferencesManager.setPreferences(KEY_USER, null);
-        SharedPreferencesManager.setPreferences(KEY_PASSWORD, null);
-        SharedPreferencesManager.setPreferences(KEY_TOKEN, null);
-        SharedPreferencesManager.setPreferences(KEY_REFRESH_TOKEN, null);
-        SharedPreferencesManager.setPreferences(KEY_RECORDAR, false);
-        SharedPreferencesManager.setPreferences((Empleado) null);
-        SharedPreferencesManager.setPreferences((Pagina) null);
+//        SharedPreferencesManager.setPreferences(KEY_USER, null);
+//        SharedPreferencesManager.setPreferences(KEY_PASSWORD, null);
+//        SharedPreferencesManager.setPreferences(KEY_TOKEN, null);
+//        SharedPreferencesManager.setPreferences(KEY_REFRESH_TOKEN, null);
+//        SharedPreferencesManager.setPreferences(KEY_RECORDAR, false);
+//        SharedPreferencesManager.setPreferences((Empleado) null);
+//        SharedPreferencesManager.setPreferences((Pagina) null);
     }
 
     public static String retornarMes(int i) {

@@ -1,8 +1,9 @@
 package com.app.partner.clinica.models.request;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class AgrupadorModulos {
+public class AgrupadorModulos implements Serializable {
 
     private Integer idagrupadormodulos;
     private String nombre;

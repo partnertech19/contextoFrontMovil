@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class IToken {
 
     private static IToken instance = null;
-    private TokenService tokenService;
+    private TokenService service;
     private Retrofit retrofit;
 
     public IToken() {
@@ -18,7 +18,7 @@ public class IToken {
                 .baseUrl(Constantes.URL_BACK)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        tokenService = retrofit.create(TokenService.class);
+        service = retrofit.create(TokenService.class);
     }
 
     public static IToken getInstance() {
@@ -28,7 +28,7 @@ public class IToken {
         return instance;
     }
 
-    public TokenService getTokenService() {
-        return tokenService;
+    public TokenService getService() {
+        return service;
     }
 }

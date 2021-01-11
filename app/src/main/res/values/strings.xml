@@ -23,7 +23,12 @@
     <string name="txtNota">Notas</string>
     <string name="hintNota">Ingrese notas sobre la cita</string>
     <string name="txtFecha">Fecha</string>
-    <string name="hintFecha">dd-mm-aaaa</string>
+    <string name="hintFecha">aaaa-mm-dd</string>
     <string name="hintHora">00:00 am/pm</string>
     <string name="txtHora">Hora</string>
+    <string name="txtDuracion">Duracion</string>
+    <string name="txtTipoSesion">Tipo Sesión</string>
+    <string name="hintHoraMin">hh:mm</string>
+    <string name="txtConsultorio">Consultorio</string>
+    <string name="txtHorario">Horario</string>
 </resources>

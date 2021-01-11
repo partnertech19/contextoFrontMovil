@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.partner.clinica.R;
+import com.app.partner.clinica.models.request.Pacientes;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,11 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class RecyclerAdapterPaciente extends RecyclerView.Adapter<RecyclerAdapterPaciente.ViewHolder> {
 
-    private List<String> lsPaciente;
-    private List<String> lsPacienteOriginal;
+    private List<Pacientes> lsPaciente;
+    private List<Pacientes> lsPacienteOriginal;
     private OnItemClickListener onItemClickListener;
 
-    public RecyclerAdapterPaciente(List<String> lsPaciente, OnItemClickListener onItemClickListener) {
+    public RecyclerAdapterPaciente(List<Pacientes> lsPaciente, OnItemClickListener onItemClickListener) {
         this.lsPaciente = lsPaciente;
         this.onItemClickListener = onItemClickListener;
         this.lsPacienteOriginal = new ArrayList<>();
@@ -58,13 +59,13 @@ public class RecyclerAdapterPaciente extends RecyclerView.Adapter<RecyclerAdapte
             lsPaciente.addAll(lsPacienteOriginal);
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                List<String> collect = lsPacienteOriginal.stream()
-                        .filter(i -> i.toLowerCase().contains(strSerch.toLowerCase()))
+                List<Pacientes> collect = lsPacienteOriginal.stream()
+                        .filter(i -> i.getSnombre().toLowerCase().contains(strSerch.toLowerCase()))
                         .collect(Collectors.toList());
                 lsPaciente.addAll(collect);
             } else {
-                for (String p : lsPacienteOriginal) {
-                    if (p.toLowerCase().contains(strSerch.toLowerCase())){
+                for (Pacientes p : lsPacienteOriginal) {
+                    if (p.getSnombre().toLowerCase().contains(strSerch.toLowerCase())){
                         lsPaciente.add(p);
                     }
                 }
@@ -84,9 +85,9 @@ public class RecyclerAdapterPaciente extends RecyclerView.Adapter<RecyclerAdapte
             imgCheck = itemView.findViewById(R.id.imgCheck);
         }
 
-        public void bind(String paciente, OnItemClickListener onItemClickListener) throws IOException {
+        public void bind(Pacientes paciente, OnItemClickListener onItemClickListener) throws IOException {
 
-            txtPacienteNombre.setText(paciente);
+            txtPacienteNombre.setText(paciente.getSnombre());
 
             imgCheck.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -98,6 +99,6 @@ public class RecyclerAdapterPaciente extends RecyclerView.Adapter<RecyclerAdapte
     }
 
     public interface OnItemClickListener {
-        void onCheckClick(String paciente, int position);
+        void onCheckClick(Pacientes paciente, int position);
     }
 }

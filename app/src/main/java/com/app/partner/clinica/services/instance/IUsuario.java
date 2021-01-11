@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class IUsuario {
 
     private static IUsuario instance = null;
-    private UsuarioService usuarioService;
+    private UsuarioService service;
     private Retrofit retrofit;
 
     public IUsuario() {
@@ -17,7 +17,7 @@ public class IUsuario {
                 .baseUrl(Constantes.URL_BACK)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        usuarioService = retrofit.create(UsuarioService.class);
+        service = retrofit.create(UsuarioService.class);
     }
 
     public static IUsuario getInstance() {
@@ -27,7 +27,7 @@ public class IUsuario {
         return instance;
     }
 
-    public UsuarioService getUsuarioService() {
-        return usuarioService;
+    public UsuarioService getService() {
+        return service;
     }
 }

@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.activities.AgendaActivity;
 import com.app.partner.clinica.activities.CitaActivity;
+import com.app.partner.clinica.activities.MainActivity;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.Calendar;
@@ -67,7 +68,7 @@ public class HorarioDialogFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View view) {
                 Intent agenda = new Intent(getContext(), AgendaActivity.class);
-                agenda.putExtra("fecha", fecha);
+                agenda.putExtra("fecha", fecha.getTime().getTime());
                 startActivity(agenda);
                 dismiss();
             }
@@ -77,11 +78,11 @@ public class HorarioDialogFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View view) {
                 Intent cita = new Intent(getContext(), CitaActivity.class);
+                cita.putExtra("fecha", fecha.getTime().getTime());
                 startActivity(cita);
                 dismiss();
             }
         });
-
     }
 
 }

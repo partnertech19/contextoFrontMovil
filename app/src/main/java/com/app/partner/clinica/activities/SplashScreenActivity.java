@@ -13,12 +13,8 @@ import android.widget.Toast;
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.common.Constantes;
 import com.app.partner.clinica.common.SharedPreferencesManager;
-import com.app.partner.clinica.models.request.Empleado;
-import com.app.partner.clinica.models.response.ResponseEmpleado;
 import com.app.partner.clinica.models.response.ResponseToken;
-import com.app.partner.clinica.services.instance.IEmpleado;
 import com.app.partner.clinica.services.instance.IToken;
-import com.app.partner.clinica.services.service.EmpleadoService;
 import com.app.partner.clinica.services.service.TokenService;
 
 public class SplashScreenActivity extends AppCompatActivity {
@@ -85,6 +81,6 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private void retrofitInit() {
         iToken = IToken.getInstance();
-        sToken = iToken.getTokenService();
+        sToken = iToken.getService();
     }
 }

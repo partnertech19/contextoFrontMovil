@@ -64,13 +64,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private void retrofitInit() {
         iToken = IToken.getInstance();
-        sToken = iToken.getTokenService();
+        sToken = iToken.getService();
 
         iEmpleado = IEmpleado.getInstance();
-        sEmpleado = iEmpleado.getEmpleadoService();
+        sEmpleado = iEmpleado.getService();
 
         iAgrupadorModulos = IAgrupadorModulos.getInstance();
-        sAgrupadorModulos = iAgrupadorModulos.getAgrupadorModulosService();
+        sAgrupadorModulos = iAgrupadorModulos.getService();
     }
 
     private void obtenerViews() {
@@ -164,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseAgrupadorModulos> call, Response<ResponseAgrupadorModulos> response) {
                 if (response.isSuccessful()) {
-                    AgrupadorModulos resp = response.body().getAaData().get(0);
+                    AgrupadorModulos resp = response.body().getAaData().get(2);
                     retornarAcceso(resp);
                 } else {
                     Toast.makeText(LoginActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
@@ -179,7 +179,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-
     private void retornarAcceso(AgrupadorModulos agrupadorModulos) {
         Call<ResponseModulo> call = sEmpleado.retornarAcceso(agrupadorModulos);
         call.enqueue(new Callback<ResponseModulo>() {
@@ -188,8 +187,8 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     List<Modulo> lsModulo = response.body().getAaData();
                     if (lsModulo.size() > 0) {
-                        Pagina pagina = lsModulo.get(0).getLsPaginas().get(0);
-                        if (pagina != null) {
+                        if (lsModulo.get(0).getLsPaginas().size() > 0) {
+                            Pagina pagina = lsModulo.get(0).getLsPaginas().get(0);
                             if (validarPagina(pagina)) {
                                 SharedPreferencesManager.setPreferences(pagina);
 

@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class IEmpleado {
 
     private static IEmpleado instance = null;
-    private EmpleadoService empleadoService;
+    private EmpleadoService service;
     private Retrofit retrofit;
 
     public IEmpleado() {
@@ -25,7 +25,7 @@ public class IEmpleado {
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpCliente.build())
                 .build();
-        empleadoService = retrofit.create(EmpleadoService.class);
+        service = retrofit.create(EmpleadoService.class);
     }
 
     public static IEmpleado getInstance() {
@@ -35,7 +35,7 @@ public class IEmpleado {
         return instance;
     }
 
-    public EmpleadoService getEmpleadoService() {
-        return empleadoService;
+    public EmpleadoService getService() {
+        return service;
     }
 }
