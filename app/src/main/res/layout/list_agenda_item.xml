@@ -38,7 +38,7 @@
             android:text="08:00 AM"
             android:textColor="#FFFFFF"
             android:textSize="15dp"
-            app:layout_constraintBottom_toTopOf="@+id/txtCitaDescripcion"
+            app:layout_constraintBottom_toTopOf="@+id/txtCitaNotas"
             app:layout_constraintEnd_toEndOf="@+id/txtCitaEstado"
             app:layout_constraintTop_toBottomOf="@+id/txtCitaEstado" />
 
@@ -56,12 +56,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/txtCitaDescripcion"
+            android:id="@+id/txtCitaNotas"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="15dp"
             android:fontFamily="@font/roboto"
             android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eget augue vel neque blandit ullamcorper. Ut in orci tellus. Nulla vitae massa eu nulla lacinia scelerisque at et neque. Morbi quam mauris, elementum nec aliquam ac, ultricies nec nisl. Etiam lobortis erat id mollis facilisis. Duis laoreet a lectus sit amet interdum. Nunc malesuada tellus a consequat malesuada. Integer cursus scelerisque orci, eget placerat risus mattis quis. Nunc sed nisl ut erat maximus pharetra."
             android:textColor="#FFFFFF"

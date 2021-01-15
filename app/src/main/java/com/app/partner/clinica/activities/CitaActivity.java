@@ -23,12 +23,12 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.adapters.RecyclerAdapterPaciente;
+import com.app.partner.clinica.code.RangeTimePickerDialog;
+import com.app.partner.clinica.common.Constantes;
 import com.app.partner.clinica.common.SharedPreferencesManager;
 import com.app.partner.clinica.models.request.Consultorio;
 import com.app.partner.clinica.models.request.Consultoriodoctor;
@@ -39,7 +39,7 @@ import com.app.partner.clinica.models.request.Tiposesion;
 import com.app.partner.clinica.models.response.ResponseConsultorio;
 import com.app.partner.clinica.models.response.ResponseConsultoriodoctor;
 import com.app.partner.clinica.models.response.ResponsePaciente;
-import com.app.partner.clinica.models.response.ResponseTerapiaIndividual;
+import com.app.partner.clinica.models.response.ResponseTerapiaEntrevista;
 import com.app.partner.clinica.models.response.ResponseTiposesion;
 import com.app.partner.clinica.services.instance.IConsultorio;
 import com.app.partner.clinica.services.instance.IPaciente;
@@ -89,7 +89,7 @@ public class CitaActivity extends AppCompatActivity {
     private List<Consultorio> lsConsultorio;
     private List<Consultoriodoctor> lsConsultoriodoctor;
 
-    private boolean firstTime = true;
+    private int minHour = -1, minMinute = -1, maxHour = 100, maxMinute = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,19 +108,15 @@ public class CitaActivity extends AppCompatActivity {
             accion = 1;
             calendar.setTimeInMillis(extras.getLong("fecha"));
             this.fecha = calendar;
-
-            obtenerViews();
-            eventosViews();
-
             listarPacientes();
         } else {
             accion = extras.getInt("accion");
             calendar.setTimeInMillis(terapiaindividual.getTfechaterapia());
             this.fecha = calendar;
             pacientes = terapiaindividual.getPacientes();
-            obtenerViews();
-            eventosViews();
         }
+        obtenerViews();
+        eventosViews();
     }
 
     private void listarPacientes() {
@@ -131,13 +127,13 @@ public class CitaActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     crearRecycler(response.body().getAaData());
                 } else {
-                    Toast.makeText(CitaActivity.this, "ERROR INTERNO", Toast.LENGTH_LONG).show();
+                    Constantes.alertWarning(Constantes.INFORMACION, "No se logró listar los pacientes");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponsePaciente> call, Throwable t) {
-                Toast.makeText(CitaActivity.this, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET", Toast.LENGTH_LONG).show();
+                Constantes.alertError(Constantes.PROBLEMA, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET");
             }
         });
     }
@@ -166,17 +162,18 @@ public class CitaActivity extends AppCompatActivity {
             edtCitaFecha.setText(fecha.get(Calendar.YEAR) + "-" + retornarCero(fecha.get(Calendar.MONTH) + 1) + "-" + retornarCero(fecha.get(Calendar.DAY_OF_MONTH)));
             int hora = fecha.get(Calendar.HOUR_OF_DAY);
             int minuto = fecha.get(Calendar.MINUTE);
-            edtCitaHora.setText(retornarCero((hora > 12 ? hora - 12 : (hora == 0) ? 12 : hora)) + ":" + retornarCero(minuto) + " " + ((hora >= 12 && hora != 0) ? "pm" : "am"));
+            edtCitaHora.setText(retornarCero(hora) + ":" + retornarCero(minuto));
             edtCitaDuracion.setText(retornarTiempo(terapiaindividual.getIduracionmin()));
+            edtCitaNotas.setText(terapiaindividual.getSnotas());
             if (accion == 2) {
                 edtCitaNotas.setEnabled(false);
-                edtCitaNotas.setText(terapiaindividual.getSnotas());
             } else if (accion == 3) {
                 edtCitaFecha.setEnabled(false);
                 edtCitaHora.setEnabled(false);
                 edtCitaDuracion.setEnabled(false);
+                spnnConsultorio.setEnabled(false);
+                spnnHorarioConsul.setEnabled(false);
                 spnnTipoSesion.setEnabled(false);
-                edtCitaNotas.setText(terapiaindividual.getSnotas());
             }
         }
     }
@@ -213,24 +210,28 @@ public class CitaActivity extends AppCompatActivity {
         edtCitaHora.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TimePickerDialog timePicker = new TimePickerDialog(CitaActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                RangeTimePickerDialog rangeTimePickerDialog = new RangeTimePickerDialog(CitaActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int hora, int minuto) {
                         fecha.set(Calendar.HOUR_OF_DAY, hora);
                         fecha.set(Calendar.MINUTE, minuto);
                         fecha.set(Calendar.SECOND, 1);
-                        edtCitaHora.setText(retornarCero((hora > 12 ? hora - 12 : (hora == 0) ? 12 : hora)) + ":" + retornarCero(minuto) + " " + ((hora >= 12 && hora != 0) ? "pm" : "am"));
+                        edtCitaHora.setText(retornarCero(hora) + ":" + retornarCero(minuto));
+//                        edtCitaHora.setText(retornarCero((hora > 12 ? hora - 12 : (hora == 0) ? 12 : hora)) + ":" + retornarCero(minuto) + " " + ((hora >= 12 && hora != 0) ? "pm" : "am"));
                     }
-                }, fecha.get(Calendar.HOUR_OF_DAY), fecha.get(Calendar.MINUTE), false);
-                timePicker.show();
+                }, fecha.get(Calendar.HOUR_OF_DAY), fecha.get(Calendar.MINUTE), true);
+
+                rangeTimePickerDialog.setMin(minHour, minMinute);
+                rangeTimePickerDialog.setMax(maxHour, maxMinute);
+                rangeTimePickerDialog.show();
             }
         });
 
         btnNuevaCita.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean tiempoExcedido = tiempoPermitido();
-                if (pacientes != null && !edtCitaHora.getText().toString().isEmpty() && !edtCitaDuracion.getText().toString().isEmpty() && tiempoExcedido) {
+                boolean tiempoExcedido = !edtCitaDuracion.getText().toString().isEmpty() ? tiempoPermitido() : false;
+                if (pacientes != null && !edtCitaHora.getText().toString().isEmpty() && tiempoExcedido) {
                     new AlertDialog.Builder(CitaActivity.this)
                             .setCancelable(false)
                             .setTitle("Confirmar")
@@ -256,14 +257,14 @@ public class CitaActivity extends AppCompatActivity {
                             })
                             .show();
                 } else {
-                    Toast.makeText(CitaActivity.this, "Complete los campos", Toast.LENGTH_LONG).show();
+                    Constantes.alertWarning(Constantes.VALIDACION, "Complete los campos");
                     if (edtPacienteNombre.getText().toString().isEmpty())
                         edtPacienteNombre.setError("Campo requerido");
                     if (edtCitaHora.getText().toString().isEmpty())
                         edtCitaHora.setError("Campo requerido");
                     if (edtCitaDuracion.getText().toString().isEmpty())
                         edtCitaDuracion.setError("Campo requerido");
-                    if (!tiempoExcedido)  edtCitaDuracion.setError("Tiempo excedido");
+                    if (!tiempoExcedido) edtCitaDuracion.setError("Tiempo excedido");
                 }
             }
         });
@@ -273,7 +274,7 @@ public class CitaActivity extends AppCompatActivity {
     }
 
     private boolean tiempoPermitido() {
-        int contador= 0;
+        int contador = 0;
         Calendar fTerapia = Calendar.getInstance();
         fTerapia.setTimeInMillis(fecha.getTimeInMillis());
 
@@ -282,7 +283,7 @@ public class CitaActivity extends AppCompatActivity {
 
         while (fTerapia.before(fConsulDoctor)) {
             fTerapia.add(Calendar.MINUTE, 1);
-            contador ++;
+            contador++;
         }
         int minuto = retornarMinutos(edtCitaDuracion.getText().toString());
 
@@ -297,38 +298,43 @@ public class CitaActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
 
                     lsConsultorio = response.body().getAaData();
-                    for (int i = 0; i < lsConsultorio.size(); i++) {
-                        Consultorio cs = lsConsultorio.get(i);
-                        if (cs.getIidconsultorio() == terapiaindividual.getIidconsultorio()) {
-                            lsConsultorio.remove(i);
-                            lsConsultorio.add(0, cs);
-                            break;
+                    if (lsConsultorio != null && lsConsultorio.size() > 0) {
+                        for (int i = 0; i < lsConsultorio.size(); i++) {
+                            Consultorio cs = lsConsultorio.get(i);
+                            if (cs.getIidconsultorio() == terapiaindividual.getIidconsultorio()) {
+                                lsConsultorio.remove(i);
+                                lsConsultorio.add(0, cs);
+                                break;
+                            }
                         }
+
+                        ArrayAdapter adapter = new ArrayAdapter(CitaActivity.this, android.R.layout.simple_spinner_dropdown_item, lsConsultorio);
+                        spnnConsultorio.setAdapter(adapter);
+                        spnnConsultorio.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                                consultorio = lsConsultorio.get(i);
+                                terapiaindividual.setIidconsultorio(consultorio.getIidconsultorio());
+                                listarConsulDoctor(consultorio);
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> adapterView) {
+
+                            }
+                        });
+                    } else {
+                        Constantes.alertWarning(Constantes.INFORMACION, "No se logró listar los consultorios");
                     }
 
-                    ArrayAdapter adapter = new ArrayAdapter(CitaActivity.this, android.R.layout.simple_spinner_dropdown_item, lsConsultorio);
-                    spnnConsultorio.setAdapter(adapter);
-                    spnnConsultorio.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                            consultorio = lsConsultorio.get(i);
-                            terapiaindividual.setIidconsultorio(consultorio.getIidconsultorio());
-                            listarConsulDoctor(consultorio);
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> adapterView) {
-
-                        }
-                    });
                 } else {
-                    Toast.makeText(CitaActivity.this, "ERROR INTERNO", Toast.LENGTH_LONG).show();
+                    Constantes.alertWarning(Constantes.INFORMACION, "No se logró listar los consultorios");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseConsultorio> call, Throwable t) {
-                Toast.makeText(CitaActivity.this, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET", Toast.LENGTH_LONG).show();
+                Constantes.alertError(Constantes.PROBLEMA, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET");
             }
         });
     }
@@ -344,49 +350,23 @@ public class CitaActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
 
                     List<Consultoriodoctor> lsConsulDoctor = response.body().getAaData();
-
                     if (lsConsulDoctor != null && lsConsulDoctor.size() > 0) {
-
-                        if (terapiaindividual.getIidterapiaindiv() > 0) {
-
-                            Calendar fTerapia = Calendar.getInstance();
-                            fTerapia.setTimeInMillis(terapiaindividual.getTfechaterapia());
-
-                            int htera = fTerapia.get(Calendar.HOUR_OF_DAY);
-                            int mtera = fTerapia.get(Calendar.MINUTE);
-
-                            for (int i = 0; i < lsConsulDoctor.size(); i++) {
-                                Consultoriodoctor csd = lsConsulDoctor.get(i);
-                                Calendar fConsulDoc = Calendar.getInstance();
-                                fConsulDoc.setTimeInMillis(csd.getTfechainicio());
-                                int hConsulDoc = fTerapia.get(Calendar.HOUR_OF_DAY);
-                                int mConsulDoc = fTerapia.get(Calendar.MINUTE);
-                                if (htera == hConsulDoc && mtera == mConsulDoc) {
-                                    lsConsulDoctor.remove(i);
-                                    lsConsulDoctor.add(0, csd);
-                                    break;
-                                }
-                            }
-                        }
 
                         ArrayAdapter adapter = new ArrayAdapter(CitaActivity.this, android.R.layout.simple_spinner_dropdown_item, lsConsulDoctor);
                         spnnHorarioConsul.setAdapter(adapter);
                         spnnHorarioConsul.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
                             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                                if (!firstTime || lsConsulDoctor.size() <= 1) {
-                                    consultoriodoctor = lsConsulDoctor.get(i);
-                                    Calendar finicio = Calendar.getInstance();
-                                    finicio.setTimeInMillis(consultoriodoctor.getTfechainicio());
-                                    int hora = finicio.get(Calendar.HOUR_OF_DAY);
-                                    int minuto = finicio.get(Calendar.MINUTE);
-                                    fecha.set(Calendar.HOUR_OF_DAY, hora);
-                                    fecha.set(Calendar.MINUTE, minuto);
-                                    fecha.set(Calendar.SECOND, 1);
-                                    edtCitaHora.setText(retornarCero((hora > 12 ? hora - 12 : (hora == 0) ? 12 : hora)) + ":" + retornarCero(minuto) + " " + ((hora >= 12 && hora != 0) ? "pm" : "am"));
-                                } else {
-                                    firstTime = false;
-                                }
+                                consultoriodoctor = lsConsulDoctor.get(i);
+                                Calendar finicioHorario = Calendar.getInstance();
+                                finicioHorario.setTimeInMillis(consultoriodoctor.getTfechainicio());
+                                minHour = finicioHorario.get(Calendar.HOUR_OF_DAY);
+                                minMinute = finicioHorario.get(Calendar.MINUTE);
+
+                                Calendar ffinHorario = Calendar.getInstance();
+                                ffinHorario.setTimeInMillis(consultoriodoctor.getTfechafin());
+                                maxHour = ffinHorario.get(Calendar.HOUR_OF_DAY);
+                                maxMinute = ffinHorario.get(Calendar.MINUTE);
                             }
 
                             @Override
@@ -398,16 +378,16 @@ public class CitaActivity extends AppCompatActivity {
                         ArrayAdapter adapter = new ArrayAdapter(CitaActivity.this, android.R.layout.simple_spinner_dropdown_item, new ArrayList());
                         spnnHorarioConsul.setAdapter(adapter);
                         edtCitaHora.setText("");
-                        Toast.makeText(CitaActivity.this, "No hay horarios disponibles en esta fecha", Toast.LENGTH_SHORT).show();
+                        Constantes.alertInfo(Constantes.INFORMACION, "No hay horarios disponibles en esta fecha");
                     }
                 } else {
-                    Toast.makeText(CitaActivity.this, "ERROR INTERNO", Toast.LENGTH_LONG).show();
+                    Constantes.alertWarning(Constantes.INFORMACION, "No se logró listar los horarios");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseConsultoriodoctor> call, Throwable t) {
-                Toast.makeText(CitaActivity.this, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET", Toast.LENGTH_LONG).show();
+                Constantes.alertError(Constantes.PROBLEMA, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET");
             }
         });
 
@@ -444,13 +424,13 @@ public class CitaActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    Toast.makeText(CitaActivity.this, "ERROR INTERNO", Toast.LENGTH_LONG).show();
+                    Constantes.alertWarning(Constantes.INFORMACION, "No se logró listar los tipos de sesión");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseTiposesion> call, Throwable t) {
-                Toast.makeText(CitaActivity.this, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET", Toast.LENGTH_LONG).show();
+                Constantes.alertError(Constantes.PROBLEMA, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET");
             }
         });
     }
@@ -460,24 +440,25 @@ public class CitaActivity extends AppCompatActivity {
         this.terapiaindividual.setIestado(2);
         this.terapiaindividual.setPacientes(null);
 
-        Call<ResponseTerapiaIndividual> call = sterapiaIndividual.actualizar(this.terapiaindividual);
-        call.enqueue(new Callback<ResponseTerapiaIndividual>() {
+        Call<ResponseTerapiaEntrevista> call = sterapiaIndividual.actualizar(this.terapiaindividual);
+        call.enqueue(new Callback<ResponseTerapiaEntrevista>() {
             @Override
-            public void onResponse(Call<ResponseTerapiaIndividual> call, Response<ResponseTerapiaIndividual> response) {
+            public void onResponse(Call<ResponseTerapiaEntrevista> call, Response<ResponseTerapiaEntrevista> response) {
                 if (response.isSuccessful()) {
-                    ResponseTerapiaIndividual resp = response.body();
-                    Toast.makeText(CitaActivity.this, "Completado OK", Toast.LENGTH_LONG).show();
+//                    ResponseTerapiaIndividual resp = response.body();
+                    Constantes.alertSuccess(Constantes.NOTIFICACION, "Registro completado correctamente");
+
                     Intent main = new Intent(CitaActivity.this, MainActivity.class);
                     startActivity(main);
                     finish();
                 } else {
-                    Toast.makeText(CitaActivity.this, "ERROR INTERNO", Toast.LENGTH_LONG).show();
+                    Constantes.alertWarning(Constantes.NOTIFICACION, "Error al completar registro");
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseTerapiaIndividual> call, Throwable t) {
-                Toast.makeText(CitaActivity.this, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET", Toast.LENGTH_LONG).show();
+            public void onFailure(Call<ResponseTerapiaEntrevista> call, Throwable t) {
+                Constantes.alertError(Constantes.PROBLEMA, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET");
             }
         });
     }
@@ -486,24 +467,25 @@ public class CitaActivity extends AppCompatActivity {
         this.terapiaindividual.setTfechaterapia(fecha.getTime().getTime());
         this.terapiaindividual.setIduracionmin(retornarMinutos(edtCitaDuracion.getText().toString()));
         this.terapiaindividual.setPacientes(null);
-        Call<ResponseTerapiaIndividual> call = sterapiaIndividual.actualizar(this.terapiaindividual);
-        call.enqueue(new Callback<ResponseTerapiaIndividual>() {
+        Call<ResponseTerapiaEntrevista> call = sterapiaIndividual.actualizar(this.terapiaindividual);
+        call.enqueue(new Callback<ResponseTerapiaEntrevista>() {
             @Override
-            public void onResponse(Call<ResponseTerapiaIndividual> call, Response<ResponseTerapiaIndividual> response) {
+            public void onResponse(Call<ResponseTerapiaEntrevista> call, Response<ResponseTerapiaEntrevista> response) {
                 if (response.isSuccessful()) {
-                    ResponseTerapiaIndividual resp = response.body();
-                    Toast.makeText(CitaActivity.this, "Reprogramacion OK", Toast.LENGTH_LONG).show();
+//                    ResponseTerapiaIndividual resp = response.body();
+                    Constantes.alertSuccess(Constantes.NOTIFICACION, "Registro reprogramado correctamente");
+
                     Intent main = new Intent(CitaActivity.this, MainActivity.class);
                     startActivity(main);
                     finish();
                 } else {
-                    Toast.makeText(CitaActivity.this, "ERROR INTERNO", Toast.LENGTH_LONG).show();
+                    Constantes.alertWarning(Constantes.NOTIFICACION, "Error al reprogramar registro");
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseTerapiaIndividual> call, Throwable t) {
-                Toast.makeText(CitaActivity.this, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET", Toast.LENGTH_LONG).show();
+            public void onFailure(Call<ResponseTerapiaEntrevista> call, Throwable t) {
+                Constantes.alertError(Constantes.PROBLEMA, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET");
             }
         });
     }
@@ -518,24 +500,40 @@ public class CitaActivity extends AppCompatActivity {
         this.terapiaindividual.setIidempresa(empleado.getIdempresa());
         this.terapiaindividual.setIduracionmin(retornarMinutos(edtCitaDuracion.getText().toString()));
 
-        Call<ResponseTerapiaIndividual> call = sterapiaIndividual.insertar(terapiaindividual);
-        call.enqueue(new Callback<ResponseTerapiaIndividual>() {
+        Call<ResponseTerapiaEntrevista> call = sterapiaIndividual.insertar(terapiaindividual);
+        call.enqueue(new Callback<ResponseTerapiaEntrevista>() {
             @Override
-            public void onResponse(Call<ResponseTerapiaIndividual> call, Response<ResponseTerapiaIndividual> response) {
+            public void onResponse(Call<ResponseTerapiaEntrevista> call, Response<ResponseTerapiaEntrevista> response) {
                 if (response.isSuccessful()) {
-                    ResponseTerapiaIndividual resp = response.body();
-                    Toast.makeText(CitaActivity.this, "Registro OK", Toast.LENGTH_LONG).show();
-                    Intent main = new Intent(CitaActivity.this, MainActivity.class);
-                    startActivity(main);
-                    finish();
+                    ResponseTerapiaEntrevista resp = response.body();
+                    if (resp.getOk()) {
+                        Constantes.alertSuccess(Constantes.NOTIFICACION, "Terapia registrada correctamente");
+                        Intent main = new Intent(CitaActivity.this, MainActivity.class);
+                        startActivity(main);
+                        finish();
+                    } else {
+
+                        new AlertDialog.Builder(CitaActivity.this)
+                                .setCancelable(false)
+                                .setTitle(Constantes.INFORMACION)
+                                .setMessage(resp.getMsg())
+                                .setNegativeButton("Cerrar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int i) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
+//                        Constantes.alertInfo(Constantes.NOTIFICACION, resp.getMsg());
+                    }
                 } else {
-                    Toast.makeText(CitaActivity.this, "ERROR INTERNO", Toast.LENGTH_LONG).show();
+                    Constantes.alertWarning(Constantes.NOTIFICACION, "Error al registrar la terapia");
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseTerapiaIndividual> call, Throwable t) {
-                Toast.makeText(CitaActivity.this, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET", Toast.LENGTH_LONG).show();
+            public void onFailure(Call<ResponseTerapiaEntrevista> call, Throwable t) {
+                Constantes.alertError(Constantes.PROBLEMA, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET");
             }
         });
     }
@@ -570,7 +568,7 @@ public class CitaActivity extends AppCompatActivity {
             rcyPaciente.setLayoutManager(lymPaciente);
             rcyPaciente.setAdapter(adtPaciente);
         } else {
-            Toast.makeText(this, "No hay pacientes asociados", Toast.LENGTH_SHORT).show();
+            Constantes.alertWarning(Constantes.INFORMACION, "No hay pacientes asociados");
         }
     }
 

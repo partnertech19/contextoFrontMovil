@@ -31,4 +31,18 @@
     <string name="hintHoraMin">hh:mm</string>
     <string name="txtConsultorio">Consultorio</string>
     <string name="txtHorario">Horario</string>
+    <string name="ckLunes">Lunes</string>
+    <string name="ckMartes">Martes</string>
+    <string name="ckMiercoles">Miercoles</string>
+    <string name="ckJueves">Jueves</string>
+    <string name="ckViernes">Viernes</string>
+    <string name="ckSabado">Sabado</string>
+    <string name="ckDomingo">Domingo</string>
+    <string name="txtDias">Dias</string>
+    <string name="txtSemanaEscogida">Semana escogida</string>
+    <string name="txtanno">Año</string>
+    <string name="txtMes">Mes</string>
+    <string name="txtSemanaHaClonar">Semana ha clonar</string>
+    <string name="txtMsjDisponibilidad">No hay consultorios disponibles para este día, no es posible agregar un nuevo evento.</string>
+    <string name="btnConfirmar">CONFIRMAR</string>
 </resources>

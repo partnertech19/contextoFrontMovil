@@ -155,7 +155,7 @@
             android:layout_marginLeft="3dp"
             android:layout_weight="0.5"
             android:background="@drawable/input"
-            android:enabled="false"
+            android:enabled="true"
             android:focusable="false"
             android:hint="@string/hintHora"
             android:inputType="textPersonName"
@@ -232,8 +232,8 @@
             android:id="@+id/spnnTipoSesion"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="3dp"
             android:layout_weight="0.5"
+            android:layout_marginLeft="3dp"
             android:background="@drawable/input" />
     </LinearLayout>
 
@@ -261,8 +261,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:fontFamily="@font/roboto"
             android:text="@string/txtFecha"
+            android:fontFamily="@font/roboto"
             android:textColor="@color/colorAccent" />
     </LinearLayout>
 

@@ -10,17 +10,18 @@ import retrofit2.Response;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.adapters.RecyclerAdapterAgenda;
+import com.app.partner.clinica.common.Constantes;
 import com.app.partner.clinica.fragments.AgendaDialogFragment;
 import com.app.partner.clinica.models.request.TerapiaEntrevista;
 import com.app.partner.clinica.models.request.Terapiaindividual;
-import com.app.partner.clinica.models.response.ResponseTerapiaIndividual;
+import com.app.partner.clinica.models.response.ResponseTerapiaEntrevista;
 import com.app.partner.clinica.services.instance.ITerapiaIndividual;
 import com.app.partner.clinica.services.service.TerapiaIndividualService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AgendaActivity extends AppCompatActivity {
@@ -30,41 +31,48 @@ public class AgendaActivity extends AppCompatActivity {
     private RecyclerView.Adapter adtAgenda;
     private RecyclerView.LayoutManager lymAgenda;
 
-//    private List<String> lsAgenda = new ArrayList<>(Arrays.asList("Adrian Mauricio Torres Morales", "Juan Jose Carrascal Trigueros", "Angel Eduardo Arce Ramos", "Jesus Picardo Picardo", "Adrian Mauricio Torres Morales", "Juan Jose Carrascal Trigueros", "Angel Eduardo Arce Ramos", "Jesus Picardo Picardo"));
-
     ITerapiaIndividual iTerapiaIndividual;
     TerapiaIndividualService sTerapiaIndividual;
+
+    private Long fechaSeleccionada;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agenda);
         retrofitInit();
-        Bundle extras = getIntent().getExtras();
         obtenerViews();
         eventosViews();
 
-        listarAgenda(extras.getLong("fecha"));
+        Bundle extras = getIntent().getExtras();
+        this.fechaSeleccionada = extras.getLong("fecha");
+        listarAgenda();
     }
 
-    private void listarAgenda(Long fechaSeleccionada) {
+    public void listarAgenda() {
         Terapiaindividual terapiaIndividual = new Terapiaindividual();
         terapiaIndividual.setIiddoctor(9);
-        terapiaIndividual.setTfechaterapia(fechaSeleccionada);
-        Call<ResponseTerapiaIndividual> call = sTerapiaIndividual.listarPorDoctorFecha(terapiaIndividual);
-        call.enqueue(new Callback<ResponseTerapiaIndividual>() {
+        terapiaIndividual.setTfechaterapia(this.fechaSeleccionada);
+        Call<ResponseTerapiaEntrevista> call = sTerapiaIndividual.listarPorDoctorFecha(terapiaIndividual);
+        call.enqueue(new Callback<ResponseTerapiaEntrevista>() {
             @Override
-            public void onResponse(Call<ResponseTerapiaIndividual> call, Response<ResponseTerapiaIndividual> response) {
-                if (response.isSuccessful()){
-                    crearRecycler(response.body().getAaData());
-                }else {
-                    Toast.makeText(AgendaActivity.this, "ERROR INTERNO", Toast.LENGTH_LONG).show();
+            public void onResponse(Call<ResponseTerapiaEntrevista> call, Response<ResponseTerapiaEntrevista> response) {
+                if (response.isSuccessful()) {
+                    List<TerapiaEntrevista> lsTerapiaEntrevista = response.body().getAaData();
+                    if (lsTerapiaEntrevista != null)
+                        crearRecycler(lsTerapiaEntrevista);
+                    else {
+                        crearRecycler(new ArrayList<>());
+                        Constantes.alertInfo(Constantes.NOTIFICACION, "No hay eventos para este día");
+                    }
+                } else {
+                    Constantes.alertWarning(Constantes.NOTIFICACION, "No se logró listar la agenda del día");
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseTerapiaIndividual> call, Throwable t) {
-                Toast.makeText(AgendaActivity.this, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET", Toast.LENGTH_LONG).show();
+            public void onFailure(Call<ResponseTerapiaEntrevista> call, Throwable t) {
+                Constantes.alertError(Constantes.PROBLEMA, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET");
             }
         });
     }
@@ -74,7 +82,6 @@ public class AgendaActivity extends AppCompatActivity {
         adtAgenda = new RecyclerAdapterAgenda(lsAgenda, new RecyclerAdapterAgenda.OnItemClickListener() {
             @Override
             public void onItemClick(TerapiaEntrevista terapiaEntrevista, int position) {
-//                Toast.makeText(AgendaActivity.this, agenda, Toast.LENGTH_SHORT).show();
                 AgendaDialogFragment dialogFragment = new AgendaDialogFragment(terapiaEntrevista.getTerapiaindividual());
                 dialogFragment.show(getSupportFragmentManager(), "agendaDialog");
             }

@@ -15,4 +15,7 @@ public interface ConsultorioService {
 
     @POST("api/consultorioDoctor/listarPorFechaMovil")
     Call<ResponseConsultoriodoctor> listarConsulDoctorPorFecha(@Body Consultoriodoctor consultoriodoctor);
+
+    @POST("api/consultorioDoctor/validarDisponibilidad")
+    Call<Boolean> validarDisponibilidad(@Body Consultoriodoctor consultoriodoctor);
 }

@@ -9,13 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.app.partner.clinica.R;
+import com.app.partner.clinica.activities.AgendaActivity;
 import com.app.partner.clinica.activities.CitaActivity;
-import com.app.partner.clinica.activities.MainActivity;
+import com.app.partner.clinica.common.Constantes;
 import com.app.partner.clinica.models.request.Terapiaindividual;
-import com.app.partner.clinica.models.response.ResponseTerapiaIndividual;
+import com.app.partner.clinica.models.response.ResponseTerapiaEntrevista;
 import com.app.partner.clinica.services.instance.ITerapiaIndividual;
 import com.app.partner.clinica.services.service.TerapiaIndividualService;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -104,23 +104,25 @@ public class AgendaDialogFragment extends BottomSheetDialogFragment {
     }
 
     private void eliminarTerapia() {
-        Call<ResponseTerapiaIndividual> call = sterapiaIndividual.eliminar(terapiaindividual.getIidterapiaindiv());
-        call.enqueue(new Callback<ResponseTerapiaIndividual>() {
+        Call<ResponseTerapiaEntrevista> call = sterapiaIndividual.eliminar(terapiaindividual.getIidterapiaindiv());
+        call.enqueue(new Callback<ResponseTerapiaEntrevista>() {
             @Override
-            public void onResponse(Call<ResponseTerapiaIndividual> call, Response<ResponseTerapiaIndividual> response) {
+            public void onResponse(Call<ResponseTerapiaEntrevista> call, Response<ResponseTerapiaEntrevista> response) {
                 if (response.isSuccessful()) {
-                    ResponseTerapiaIndividual resp = response.body();
-                    Toast.makeText(getActivity(), "Eliminado OK", Toast.LENGTH_LONG).show();
-                    Intent main = new Intent(getActivity(), MainActivity.class);
-                    startActivity(main);
+//                    ResponseTerapiaIndividual resp = response.body();
+                    Constantes.alertSuccess(Constantes.NOTIFICACION, "Terapia eliminada correctamente");
+
+                    ((AgendaActivity) getActivity()).listarAgenda();
+//                    Intent main = new Intent(getActivity(), MainActivity.class);
+////                    startActivity(main);
                 } else {
-                    Toast.makeText(getActivity(), "ERROR INTERNO", Toast.LENGTH_LONG).show();
+                    Constantes.alertWarning(Constantes.NOTIFICACION, "Error al eliminar la terapia");
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseTerapiaIndividual> call, Throwable t) {
-                Toast.makeText(getActivity(), "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET", Toast.LENGTH_LONG).show();
+            public void onFailure(Call<ResponseTerapiaEntrevista> call, Throwable t) {
+                Constantes.alertError(Constantes.PROBLEMA, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET");
             }
         });
     }

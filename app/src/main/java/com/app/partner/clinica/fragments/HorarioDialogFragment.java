@@ -11,7 +11,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.DialogFragment;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +28,11 @@ import com.app.partner.clinica.R;
 import com.app.partner.clinica.activities.AgendaActivity;
 import com.app.partner.clinica.activities.CitaActivity;
 import com.app.partner.clinica.activities.MainActivity;
+import com.app.partner.clinica.common.Constantes;
+import com.app.partner.clinica.models.request.Consultoriodoctor;
+import com.app.partner.clinica.services.instance.IConsultorio;
+import com.app.partner.clinica.services.instance.ITerapiaIndividual;
+import com.app.partner.clinica.services.service.ConsultorioService;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.Calendar;
@@ -31,9 +40,13 @@ import java.util.Calendar;
 public class HorarioDialogFragment extends BottomSheetDialogFragment {
 
     Button btnVerAgenda, btnNuevaCita;
+    CardView cdvDisponibilidad;
 
-    Calendar fecha;
-    boolean existeEvento;
+    private Calendar fecha;
+    private boolean existeEvento;
+
+    IConsultorio iConsultorio;
+    ConsultorioService sConsultorio;
 
     public HorarioDialogFragment(Calendar fecha, boolean existeEvento) {
         this.fecha = fecha;
@@ -43,7 +56,7 @@ public class HorarioDialogFragment extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+        retrofitInit();
         View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_horario_dialog, null);
         obtenerViews(view);
         agregarEventos();
@@ -57,10 +70,39 @@ public class HorarioDialogFragment extends BottomSheetDialogFragment {
     private void obtenerViews(View view) {
         btnVerAgenda = view.findViewById(R.id.btnVerAgenda);
         btnNuevaCita = view.findViewById(R.id.btnNuevaCita);
+        cdvDisponibilidad = view.findViewById(R.id.cdvDisponibilidad);
 
-        if (existeEvento){
+        if (existeEvento) {
             btnVerAgenda.setVisibility(View.VISIBLE);
         }
+
+        validarDisponibilidad();
+    }
+
+    private void validarDisponibilidad() {
+        Consultoriodoctor consultoriodoctor = new Consultoriodoctor();
+        consultoriodoctor.setIiddoctor(9);
+        consultoriodoctor.setTfechainicio(fecha.getTime().getTime());
+        Call<Boolean> call = sConsultorio.validarDisponibilidad(consultoriodoctor);
+        call.enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if (response.isSuccessful()) {
+                    if (response.body()) {
+                        btnNuevaCita.setVisibility(View.VISIBLE);
+                    } else {
+                        cdvDisponibilidad.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    Constantes.alertWarning(Constantes.NOTIFICACION, "Error en validación");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                Constantes.alertError(Constantes.PROBLEMA, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET");
+            }
+        });
     }
 
     private void agregarEventos() {
@@ -85,4 +127,8 @@ public class HorarioDialogFragment extends BottomSheetDialogFragment {
         });
     }
 
+    private void retrofitInit() {
+        iConsultorio = IConsultorio.getInstance();
+        sConsultorio = iConsultorio.getService();
+    }
 }

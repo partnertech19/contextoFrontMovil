@@ -5,7 +5,7 @@ import com.app.partner.clinica.models.request.Terapiaindividual;
 
 import java.util.List;
 
-public class ResponseTerapiaIndividual {
+public class ResponseTerapiaEntrevista {
 
     private TerapiaEntrevista defaultObj;
     private List<TerapiaEntrevista> aaData;

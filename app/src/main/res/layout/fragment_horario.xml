@@ -57,10 +57,21 @@
             app:layout_constraintTop_toBottomOf="@+id/txtDia" />
 
         <ImageView
+            android:id="@+id/imgClonarSemana"
+            android:layout_width="35dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/icon_clonar"
+            android:clickable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/txtMes" />
+
+        <ImageView
             android:id="@+id/imgCerrarSesion"
             android:layout_width="35dp"
             android:layout_height="40dp"
             android:layout_marginStart="20dp"
+            android:clickable="true"
             android:src="@drawable/icon_cerrar_sesion"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/txtMes" />

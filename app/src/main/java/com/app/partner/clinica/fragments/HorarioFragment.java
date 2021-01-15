@@ -13,14 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.activities.LoginActivity;
 import com.app.partner.clinica.common.Constantes;
 import com.app.partner.clinica.models.request.TerapiaEntrevista;
 import com.app.partner.clinica.models.request.Terapiaindividual;
-import com.app.partner.clinica.models.response.ResponseTerapiaIndividual;
+import com.app.partner.clinica.models.response.ResponseTerapiaEntrevista;
 import com.app.partner.clinica.services.instance.ITerapiaIndividual;
 import com.app.partner.clinica.services.service.TerapiaIndividualService;
 import com.applandeo.materialcalendarview.CalendarView;
@@ -36,11 +35,13 @@ public class HorarioFragment extends Fragment {
 
     CalendarView cldHorario;
     TextView txtDia, txtMes, txtAnno;
-    ImageView imgCerrarSesion;
+    ImageView imgCerrarSesion, imgClonarSemana;
     List<EventDay> lsEventos = new ArrayList<>();
 
     ITerapiaIndividual iTerapiaIndividual;
     TerapiaIndividualService sTerapiaIndividual;
+
+    Calendar fechaCalendario;
 
     public HorarioFragment() {
         // Required empty public constructor
@@ -68,6 +69,14 @@ public class HorarioFragment extends Fragment {
                 Constantes.limpiarSharedPreferenes();
                 Intent login = new Intent(getContext(), LoginActivity.class);
                 startActivity(login);
+            }
+        });
+
+        imgClonarSemana.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ClonarSemanaDialogFragment dialogFragment = new ClonarSemanaDialogFragment(fechaCalendario);
+                dialogFragment.show(getActivity().getSupportFragmentManager(), "clonarSemanaDialog");
             }
         });
 
@@ -104,12 +113,12 @@ public class HorarioFragment extends Fragment {
         terapiaIndividual.setIiddoctor(9);
         terapiaIndividual.setTfechaterapia(fecha.getTime().getTime());
 
-        Call<ResponseTerapiaIndividual> call = sTerapiaIndividual.retornarFechas(terapiaIndividual);
-        call.enqueue(new Callback<ResponseTerapiaIndividual>() {
+        Call<ResponseTerapiaEntrevista> call = sTerapiaIndividual.retornarFechas(terapiaIndividual);
+        call.enqueue(new Callback<ResponseTerapiaEntrevista>() {
             @Override
-            public void onResponse(Call<ResponseTerapiaIndividual> call, Response<ResponseTerapiaIndividual> response) {
+            public void onResponse(Call<ResponseTerapiaEntrevista> call, Response<ResponseTerapiaEntrevista> response) {
                 if (response.isSuccessful()) {
-                    ResponseTerapiaIndividual resp = response.body();
+                    ResponseTerapiaEntrevista resp = response.body();
                     if (resp.getEstado() == 1) {
                         List<TerapiaEntrevista> lsTerapiaEntrevista = resp.getAaData();
                         for (TerapiaEntrevista te : lsTerapiaEntrevista) {
@@ -133,17 +142,17 @@ public class HorarioFragment extends Fragment {
                         }
                         cldHorario.setEvents(lsEventos);
                     } else {
-                        Toast.makeText(getContext(), "NO HAY EVENTOS ESTE MES", Toast.LENGTH_LONG).show();
+                        Constantes.alertInfo(Constantes.NOTIFICACION, "No hay eventos este mes");
                     }
 
                 } else {
-                    Toast.makeText(getContext(), "ERROR INTERNO", Toast.LENGTH_LONG).show();
+                    Constantes.alertWarning(Constantes.NOTIFICACION, "Error al listar los eventos");
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseTerapiaIndividual> call, Throwable t) {
-                Toast.makeText(getContext(), "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET", Toast.LENGTH_LONG).show();
+            public void onFailure(Call<ResponseTerapiaEntrevista> call, Throwable t) {
+                Constantes.alertError(Constantes.PROBLEMA, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET");
             }
         });
     }
@@ -153,6 +162,7 @@ public class HorarioFragment extends Fragment {
         txtMes = view.findViewById(R.id.txtMes);
         txtAnno = view.findViewById(R.id.txtAnno);
         imgCerrarSesion = view.findViewById(R.id.imgCerrarSesion);
+        imgClonarSemana = view.findViewById(R.id.imgClonarSemana);
         cldHorario = (CalendarView) view.findViewById(R.id.cldHorario);
     }
 
@@ -166,6 +176,7 @@ public class HorarioFragment extends Fragment {
     }
 
     private void settearFecha(Calendar fecha) {
+        this.fechaCalendario = fecha;
         txtMes.setText(Constantes.retornarMes(fecha.get(Calendar.MONTH)));
         txtDia.setText(retornarDia(fecha.get(Calendar.DAY_OF_MONTH)));
         txtAnno.setText(String.valueOf(fecha.get(Calendar.YEAR)));

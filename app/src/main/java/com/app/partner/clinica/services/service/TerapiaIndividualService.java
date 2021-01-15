@@ -1,8 +1,9 @@
 package com.app.partner.clinica.services.service;
 
+import com.app.partner.clinica.models.request.AgendaClonada;
 import com.app.partner.clinica.models.request.Terapiaindividual;
-import com.app.partner.clinica.models.response.ResponseTerapiaIndividual;
-import com.app.partner.clinica.models.response.ResponseTerapiaIndividualFecha;
+import com.app.partner.clinica.models.response.ResponseTerapiaEntrevista;
+import com.app.partner.clinica.models.response.ResponseTerapiaindividual;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -14,17 +15,20 @@ import retrofit2.http.Path;
 public interface TerapiaIndividualService {
 
     @POST("api/terapiaIndividual/retornarFechaTeraEntr")
-    Call<ResponseTerapiaIndividual> retornarFechas(@Body Terapiaindividual terapiaIndividual);
+    Call<ResponseTerapiaEntrevista> retornarFechas(@Body Terapiaindividual terapiaIndividual);
 
     @POST("api/terapiaIndividual/listarTeraEntreDoctorFecha")
-    Call<ResponseTerapiaIndividual> listarPorDoctorFecha(@Body Terapiaindividual terapiaIndividual);
+    Call<ResponseTerapiaEntrevista> listarPorDoctorFecha(@Body Terapiaindividual terapiaIndividual);
 
     @POST("api/terapiaIndividual/insertar")
-    Call<ResponseTerapiaIndividual> insertar(@Body Terapiaindividual terapiaIndividual);
+    Call<ResponseTerapiaEntrevista> insertar(@Body Terapiaindividual terapiaIndividual);
 
     @PUT("api/terapiaIndividual/actualizar")
-    Call<ResponseTerapiaIndividual> actualizar(@Body Terapiaindividual terapiaIndividual);
+    Call<ResponseTerapiaEntrevista> actualizar(@Body Terapiaindividual terapiaIndividual);
 
     @DELETE("api/terapiaIndividual/eliminar/{iidterapiaindiv}")
-    Call<ResponseTerapiaIndividual> eliminar(@Path("iidterapiaindiv") Integer iidterapiaindiv);
+    Call<ResponseTerapiaEntrevista> eliminar(@Path("iidterapiaindiv") Integer iidterapiaindiv);
+
+    @POST("api/terapiaIndividual/clonarAgenda")
+    Call<ResponseTerapiaindividual> clonarAgenda(@Body AgendaClonada agendaClonada);
 }

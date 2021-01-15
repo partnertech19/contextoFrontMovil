@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.common.Constantes;
@@ -59,6 +58,9 @@ public class LoginActivity extends AppCompatActivity {
         if (SharedPreferencesManager.getPrefBoolean(Constantes.KEY_RECORDAR)) {
             edtUsuario.setText(SharedPreferencesManager.getPrefString(Constantes.KEY_USER));
             edtPassword.setText(SharedPreferencesManager.getPrefString(Constantes.KEY_PASSWORD));
+        } else {
+            edtUsuario.setText("atorres@partnertech.pe");
+            edtPassword.setText("GNNZ8VYB65");
         }
     }
 
@@ -98,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
             getToken(usuario, password);
         } else {
             btnIngresar.setEnabled(true);
-            Toast.makeText(LoginActivity.this, "Complete los campos", Toast.LENGTH_SHORT).show();
+            Constantes.alertWarning(Constantes.VALIDACION, "Complete los campos");
         }
 
     }
@@ -124,14 +126,15 @@ public class LoginActivity extends AppCompatActivity {
                     listarAgrupadorModulos();
                     getEmpleado();
                 } else {
-                    Toast.makeText(LoginActivity.this, "Verifique que su usuario o contraseña sean correctos", Toast.LENGTH_SHORT).show();
+                    btnIngresar.setEnabled(true);
+                    Constantes.alertInfo(Constantes.VALIDACION, "Verifique que su usuario o contraseña sean correctos");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseToken> call, Throwable t) {
                 btnIngresar.setEnabled(true);
-                Toast.makeText(LoginActivity.this, "SUPER ERROR: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Constantes.alertError(Constantes.PROBLEMA, t.getMessage());
             }
         });
     }
@@ -145,13 +148,13 @@ public class LoginActivity extends AppCompatActivity {
                     Empleado empleado = (Empleado) response.body().getDefaultObj();
                     SharedPreferencesManager.setPreferences(empleado);
                 } else {
-                    Toast.makeText(LoginActivity.this, "ERROR INTERNO", Toast.LENGTH_SHORT).show();
+                    Constantes.alertError(Constantes.PROBLEMA, "No se logró conseguir información del usuario");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseEmpleado> call, Throwable t) {
-                Toast.makeText(LoginActivity.this, "SUPER ERROR INTERNO: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Constantes.alertError(Constantes.PROBLEMA, t.getMessage());
             }
         });
     }
@@ -167,14 +170,14 @@ public class LoginActivity extends AppCompatActivity {
                     AgrupadorModulos resp = response.body().getAaData().get(2);
                     retornarAcceso(resp);
                 } else {
-                    Toast.makeText(LoginActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
+                    Constantes.alertError(Constantes.PROBLEMA, "No se logró conseguir información de los permisos");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseAgrupadorModulos> call, Throwable t) {
                 btnIngresar.setEnabled(true);
-                Toast.makeText(LoginActivity.this, "SUPER ERROR INTERNO: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Constantes.alertError(Constantes.PROBLEMA, t.getMessage());
             }
         });
     }
@@ -196,17 +199,17 @@ public class LoginActivity extends AppCompatActivity {
                                 startActivity(main);
                                 finish();
                             } else {
-                                Toast.makeText(LoginActivity.this, "No cuenta con alguna página asignada", Toast.LENGTH_LONG).show();
+                                Constantes.alertInfo(Constantes.SIN_PERMISO, "No cuenta con alguna página asignada");
                             }
                         } else {
-                            Toast.makeText(LoginActivity.this, "No cuenta con alguna página asignada", Toast.LENGTH_LONG).show();
+                            Constantes.alertInfo(Constantes.SIN_PERMISO, "No cuenta con alguna página asignada");
                         }
                     } else {
-                        Toast.makeText(LoginActivity.this, "NO CUENTA CON PERMISOS PARA INGRESAR A LA APP", Toast.LENGTH_SHORT).show();
+                        Constantes.alertWarning(Constantes.SIN_PERMISO, "No cuenta con permisos para ingresar a la app");
                     }
 
                 } else {
-                    Toast.makeText(LoginActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
+                    Constantes.alertError(Constantes.PROBLEMA, "No se logró conseguir información de los accesos");
                 }
                 btnIngresar.setEnabled(true);
             }
@@ -214,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseModulo> call, Throwable t) {
                 btnIngresar.setEnabled(true);
-                Toast.makeText(LoginActivity.this, "SUPER ERROR INTERNO: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Constantes.alertError(Constantes.PROBLEMA, t.getMessage());
             }
         });
     }

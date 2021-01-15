@@ -8,11 +8,12 @@ import android.view.animation.Transformation;
 
 import com.app.partner.clinica.models.request.Empleado;
 import com.app.partner.clinica.models.request.Pagina;
+import com.mhadikz.toaster.Toaster;
 
 public class Constantes {
 
     public static final String URL_BACK = "http://64.227.109.195:7201/";
-//    public static final String URL_BACK = "http://localhost:8083/";
+    //    public static final String URL_BACK = "http://localhost:8083/";
     public static final String KEY_TOKEN = "KEY_TOKEN";
     public static final String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
     public static final String KEY_USER = "KEY_USER";
@@ -31,6 +32,18 @@ public class Constantes {
     //URL_PAGINAS
     public static final String URL_CITAS = "/citas";
     public static final String URL_ASISTENCIA = "/asistencia";
+
+    //TITULOS
+    public static final String ACTUALIZAR = "ACTUALIZAR";
+    public static final String ELIMINAR = "ELIMINAR";
+    public static final String REGISTRAR = "REGISTRAR";
+    public static final String CONFIRMAR = "CONFIRMAR";
+    public static final String VALIDACION = "VALIDACION";
+    public static final String PROBLEMA = "¡PROBLEMA!";
+    public static final String SIN_PERMISO = "SIN PERMISO";
+    public static final String CUIDADO = "¡CUIDADO!";
+    public static final String INFORMACION = "INFORMACION";
+    public static final String NOTIFICACION = "NOTIFICACION";
 
     public static void expandir(final View v) {
         int matchParentMeasureSpec = View.MeasureSpec.makeMeasureSpec(((View) v.getParent()).getWidth(), View.MeasureSpec.EXACTLY);
@@ -142,4 +155,45 @@ public class Constantes {
                 return "DIC";
         }
     }
+
+    public static String retornarCero(int numero) {
+        return (numero < 10 ? "0" + numero : "" + numero);
+    }
+
+    public static void alertSuccess(String titulo, String msj) {
+        new Toaster.Builder(MyApp.getContext())
+                .setTitle(titulo)
+                .setDescription(msj)
+                .setDuration(Toaster.LENGTH_LONG)
+                .setStatus(Toaster.Status.SUCCESS)
+                .show();
+    }
+
+    public static void alertInfo(String titulo, String msj) {
+        new Toaster.Builder(MyApp.getContext())
+                .setTitle(titulo)
+                .setDescription(msj)
+                .setDuration(Toaster.LENGTH_LONG)
+                .setStatus(Toaster.Status.INFO)
+                .show();
+    }
+
+    public static void alertWarning(String titulo, String msj) {
+        new Toaster.Builder(MyApp.getContext())
+                .setTitle(titulo)
+                .setDescription(msj)
+                .setDuration(Toaster.LENGTH_LONG)
+                .setStatus(Toaster.Status.WARNING)
+                .show();
+    }
+
+    public static void alertError(String titulo, String msj) {
+        new Toaster.Builder(MyApp.getContext())
+                .setTitle(titulo)
+                .setDescription(msj)
+                .setDuration(Toaster.LENGTH_LONG)
+                .setStatus(Toaster.Status.ERROR)
+                .show();
+    }
+
 }

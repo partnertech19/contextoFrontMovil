@@ -1,7 +1,6 @@
 package com.app.partner.clinica.adapters;
 
 import android.graphics.Color;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,7 +56,7 @@ public class RecyclerAdapterAgenda extends RecyclerView.Adapter<RecyclerAdapterA
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtPaciente, txtCitaDescripcion, txtCitaEstado, txtCitaHora;
+        TextView txtPaciente, txtCitaNotas, txtCitaEstado, txtCitaHora;
         ImageView imgRotar;
         ConstraintLayout ctlAgendaColor;
 
@@ -67,7 +65,7 @@ public class RecyclerAdapterAgenda extends RecyclerView.Adapter<RecyclerAdapterA
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtPaciente = itemView.findViewById(R.id.txtPaciente);
-            txtCitaDescripcion = itemView.findViewById(R.id.txtCitaDescripcion);
+            txtCitaNotas = itemView.findViewById(R.id.txtCitaNotas);
             imgRotar = itemView.findViewById(R.id.imgRotar);
             txtCitaEstado = itemView.findViewById(R.id.txtCitaEstado);
             txtCitaHora = itemView.findViewById(R.id.txtCitaHora);
@@ -83,14 +81,16 @@ public class RecyclerAdapterAgenda extends RecyclerView.Adapter<RecyclerAdapterA
                 txtPaciente.setText(pc.getSnombre());
                 txtCitaEstado.setText(ti.getIestado() == 0 ? "Eliminado" : ti.getIestado() == 1 ? "Programado" : "Completado");
                 calendar.setTimeInMillis(ti.getTfechaterapia());
-                txtCitaHora.setText(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
-                ctlAgendaColor.setBackgroundColor(Color.rgb(52,180,85));
+                txtCitaHora.setText(Constantes.retornarCero(calendar.get(Calendar.HOUR_OF_DAY)) + ":" + Constantes.retornarCero(calendar.get(Calendar.MINUTE)));
+                txtCitaNotas.setText(ti.getSnotas().isEmpty() ? "No se han agregado notas" : ti.getSnotas());
+                ctlAgendaColor.setBackgroundColor(Color.rgb(52, 180, 85));
             } else if (agenda.getEntrevistas() != null) {
                 Entrevistas en = agenda.getEntrevistas();
                 txtPaciente.setText(en.getSnombresolicitante());
                 txtCitaEstado.setText(en.getIestado() == 0 ? "Eliminado" : en.getIestado() == 1 ? "Programado" : "Completado");
                 calendar.setTimeInMillis(en.getTfechaentrevista());
-                txtCitaHora.setText(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
+                txtCitaHora.setText(Constantes.retornarCero(calendar.get(Calendar.HOUR_OF_DAY)) + ":" + Constantes.retornarCero(calendar.get(Calendar.MINUTE)));
+                txtCitaNotas.setText("Las entrevistas no muestran notas");
                 ctlAgendaColor.setBackgroundColor(Color.rgb(83, 187, 251));
             }
 
@@ -100,10 +100,10 @@ public class RecyclerAdapterAgenda extends RecyclerView.Adapter<RecyclerAdapterA
                     expand = !expand;
                     if (expand) {
                         Constantes.rotar180(imgRotar);
-                        Constantes.expandir(txtCitaDescripcion);
+                        Constantes.expandir(txtCitaNotas);
                     } else {
                         Constantes.rotar360(imgRotar);
-                        Constantes.colapsar(txtCitaDescripcion);
+                        Constantes.colapsar(txtCitaNotas);
                     }
                 }
             });

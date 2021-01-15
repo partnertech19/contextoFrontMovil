@@ -3,26 +3,19 @@ package com.app.partner.clinica.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.CalendarView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.common.Constantes;
 import com.app.partner.clinica.common.SharedPreferencesManager;
 import com.app.partner.clinica.fragments.AsistenciaFragment;
 import com.app.partner.clinica.fragments.HorarioFragment;
-import com.app.partner.clinica.models.request.Empleado;
 import com.app.partner.clinica.models.request.Pagina;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -131,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements AsistenciaFragmen
                 cambiarFragment(asistenciaFragment);
                 break;
             default:
-                Toast.makeText(this, "No cuenta con alguna página asignada", Toast.LENGTH_LONG).show();
+                Constantes.alertWarning(Constantes.SIN_PERMISO, "No cuenta con alguna página asignada");
                 SharedPreferencesManager.setPreferences((Pagina) null);
                 Intent login = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(login);
