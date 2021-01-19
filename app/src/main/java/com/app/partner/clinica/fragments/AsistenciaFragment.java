@@ -9,13 +9,20 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.partner.clinica.R;
+import com.app.partner.clinica.activities.LoginActivity;
+import com.app.partner.clinica.activities.MainActivity;
+import com.app.partner.clinica.common.Constantes;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 public class AsistenciaFragment extends Fragment {
 
+    ImageView imgCerrarSesion;
+    Button btnLeerQR;
     private TextView txtQr;
 
     private AsistenciaFragmentListener listener;
@@ -38,15 +45,9 @@ public class AsistenciaFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_asistencia, container, false);
 //        setToolBar();
         obtenerViews(view);
-        iniciarQr();
+        eventosViews();
 
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        txtQr.setText(listener.recibirQr());
     }
 
 //    private void setToolBar() {
@@ -56,7 +57,28 @@ public class AsistenciaFragment extends Fragment {
 //    }
 
     private void obtenerViews(View view) {
-        txtQr = view.findViewById(R.id.txtQr);
+        imgCerrarSesion = view.findViewById(R.id.imgCerrarSesionAsistencia);
+        btnLeerQR = view.findViewById(R.id.btnLeerQr);
+    }
+
+
+    private void eventosViews() {
+        imgCerrarSesion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Constantes.limpiarSharedPreferenes();
+                Intent login = new Intent(getContext(), LoginActivity.class);
+                startActivity(login);
+                getActivity().finish();
+            }
+        });
+
+        btnLeerQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                iniciarQr();
+            }
+        });
     }
 
     private void iniciarQr() {

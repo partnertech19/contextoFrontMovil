@@ -67,7 +67,7 @@
             app:layout_constraintTop_toTopOf="@+id/txtMes" />
 
         <ImageView
-            android:id="@+id/imgCerrarSesion"
+            android:id="@+id/imgCerrarSesionHorario"
             android:layout_width="35dp"
             android:layout_height="40dp"
             android:layout_marginStart="20dp"

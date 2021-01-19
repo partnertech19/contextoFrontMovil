@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.activities.LoginActivity;
+import com.app.partner.clinica.activities.MainActivity;
 import com.app.partner.clinica.common.Constantes;
 import com.app.partner.clinica.models.request.TerapiaEntrevista;
 import com.app.partner.clinica.models.request.Terapiaindividual;
@@ -69,6 +70,7 @@ public class HorarioFragment extends Fragment {
                 Constantes.limpiarSharedPreferenes();
                 Intent login = new Intent(getContext(), LoginActivity.class);
                 startActivity(login);
+                getActivity().finish();
             }
         });
 
@@ -161,7 +163,7 @@ public class HorarioFragment extends Fragment {
         txtDia = view.findViewById(R.id.txtDia);
         txtMes = view.findViewById(R.id.txtMes);
         txtAnno = view.findViewById(R.id.txtAnno);
-        imgCerrarSesion = view.findViewById(R.id.imgCerrarSesion);
+        imgCerrarSesion = view.findViewById(R.id.imgCerrarSesionHorario);
         imgClonarSemana = view.findViewById(R.id.imgClonarSemana);
         cldHorario = (CalendarView) view.findViewById(R.id.cldHorario);
     }

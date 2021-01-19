@@ -33,6 +33,11 @@ public class Constantes {
     public static final String URL_CITAS = "/citas";
     public static final String URL_ASISTENCIA = "/asistencia";
 
+    //Estado
+    public static final Integer VALTRANSOK = 1;
+    public static final Integer VALTRANSERR = 2;
+    public static final Integer VALTRANSNOOK = 3;
+
     //TITULOS
     public static final String ACTUALIZAR = "ACTUALIZAR";
     public static final String ELIMINAR = "ELIMINAR";

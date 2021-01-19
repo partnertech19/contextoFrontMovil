@@ -5,8 +5,8 @@ import java.util.List;
 public class ResponseWrapper {
 
     Object defaultObj;
-    List<Object> aaData;
-    List<Object> items;
+//    List<Object> aaData;
+//    List<Object> items;
     private Integer estado;
     private String msg;
     private String token;
@@ -37,13 +37,13 @@ public class ResponseWrapper {
         this.total_count = total_count;
     }
 
-    public List<Object> getItems() {
-        return items;
-    }
-
-    public void setItems(List<Object> items) {
-        this.items = items;
-    }
+//    public List<Object> getItems() {
+//        return items;
+//    }
+//
+//    public void setItems(List<Object> items) {
+//        this.items = items;
+//    }
 
     public void setOk(Boolean ok) {
         this.ok = ok;
@@ -107,11 +107,11 @@ public class ResponseWrapper {
         this.defaultObj = defaultObj;
     }
 
-    public List<Object> getAaData() {
-        return aaData;
-    }
-
-    public void setAaData(List<Object> aaData) {
-        this.aaData = aaData;
-    }
+//    public List<Object> getAaData() {
+//        return aaData;
+//    }
+//
+//    public void setAaData(List<Object> aaData) {
+//        this.aaData = aaData;
+//    }
 }

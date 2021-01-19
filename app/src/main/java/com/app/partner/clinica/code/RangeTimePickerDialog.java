@@ -31,10 +31,13 @@ public class RangeTimePickerDialog extends TimePickerDialog {
         super.onTimeChanged(view, hourOfDay, minute);
 
         boolean validTime;
+
         if (hourOfDay < minHour) {
             validTime = false;
         } else if (hourOfDay == minHour) {
             validTime = minute >= minMinute;
+        } else if (hourOfDay > maxHour) {
+            validTime = false;
         } else if (hourOfDay == maxHour) {
             validTime = minute <= maxMinute;
         } else {

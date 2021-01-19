@@ -144,7 +144,7 @@
             android:id="@+id/spnnHorarioConsul"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="3dp"
+            android:layout_marginRight="2dp"
             android:layout_weight="0.5"
             android:background="@drawable/input" />
 
@@ -152,7 +152,7 @@
             android:id="@+id/edtCitaHora"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
+            android:layout_marginLeft="2dp"
             android:layout_weight="0.5"
             android:background="@drawable/input"
             android:enabled="true"
@@ -220,7 +220,7 @@
             android:id="@+id/edtCitaDuracion"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="3dp"
+            android:layout_marginRight="2dp"
             android:layout_weight="0.5"
             android:background="@drawable/input"
             android:enabled="true"
@@ -233,7 +233,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:layout_marginLeft="3dp"
+            android:layout_marginLeft="2dp"
             android:background="@drawable/input" />
     </LinearLayout>
 
@@ -280,7 +280,7 @@
             android:id="@+id/spnnConsultorio"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="3dp"
+            android:layout_marginRight="2dp"
             android:layout_weight="0.5"
             android:background="@drawable/input" />
 
@@ -288,7 +288,7 @@
             android:id="@+id/edtCitaFecha"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="3dp"
+            android:layout_marginLeft="2dp"
             android:layout_weight="0.5"
             android:background="@drawable/input"
             android:enabled="true"

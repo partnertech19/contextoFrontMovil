@@ -4,16 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.AsistenciaFragment">
+    tools:context=".fragments.AsistenciaFragment"
+    android:background="@drawable/bg">
 
-    <TextView
-        android:id="@+id/txtQr"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/imgCerrarSesionAsistencia"
+        android:layout_width="35dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:src="@drawable/icon_cerrar_sesion"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnLeerQr"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:textSize="20dp"
-        android:text="QR"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="200dp"
+        android:text="@string/btnMarcarAsistencia"
+        android:background="@drawable/btn_redondeado"
+        style="@style/ButtonStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

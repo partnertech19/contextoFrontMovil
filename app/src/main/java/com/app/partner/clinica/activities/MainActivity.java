@@ -4,20 +4,33 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.common.Constantes;
 import com.app.partner.clinica.common.SharedPreferencesManager;
 import com.app.partner.clinica.fragments.AsistenciaFragment;
 import com.app.partner.clinica.fragments.HorarioFragment;
+import com.app.partner.clinica.models.request.Asistenciagrupo;
 import com.app.partner.clinica.models.request.Pagina;
+import com.app.partner.clinica.models.response.ResponseWrapper;
+import com.app.partner.clinica.services.instance.IAsistenciagrupo;
+import com.app.partner.clinica.services.instance.ITerapiaIndividual;
+import com.app.partner.clinica.services.service.AsistenciagrupoService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements AsistenciaFragment.AsistenciaFragmentListener {
 
@@ -25,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements AsistenciaFragmen
     private Fragment horarioFragment, asistenciaFragment;
 
     public String qr = "";
+
+    private IAsistenciagrupo iAsistenciagrupo;
+    private AsistenciagrupoService sAsistenciagrupo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,49 +51,90 @@ public class MainActivity extends AppCompatActivity implements AsistenciaFragmen
             setFragmentDefecto();
         }
 
+        retrofitInit();
+        obtenerViews();
+        buttonNavView();
+
 //        Toolbar toolbar = findViewById(R.id.toolbarMain);
 //        setSupportActionBar(toolbar);
 
 //        Empleado empleado = SharedPreferencesManager.getPrefEmpleado();
 //        Toast.makeText(this, "Hola " + empleado.getNombres(), Toast.LENGTH_LONG).show();
 
-        obtenerViews();
-        buttonNavView();
-
 //        getSupportActionBar().setTitle("Principal");
 //        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_launcher_background);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-//        txtInformacionQr = findViewById(R.id.txtInformacionQr);
-//        txtFecha = findViewById(R.id.txtFecha);
-//        cldFecha = findViewById(R.id.cldFecha);
-//
-//        cldFecha.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-//            @Override
-//            public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
-//                String fecha = i2 + "-" + (i1 + 1) + "-" + i;
-//                txtFecha.setText(fecha);
-//            }
-//        });
-//        new IntentIntegrator(this).initiateScan();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Constantes.alertInfo(Constantes.INFORMACION, "No se ha captura ningúun código QR");
+            } else {
+                this.qr = result.getContents();
+                validarAsistencia(result.getContents());
+            }
+        }
+    }
 
-//        if (result != null) {
-//            if (result.getContents() == null) {
-//                btnNav.setSelectedItemId(R.id.navHorario);
-//                Toast.makeText(this, "Cancelado", Toast.LENGTH_LONG).show();
-//            } else {
-//                this.qr = result.getContents();
-//            }
-//        } else {
-//            btnNav.setSelectedItemId(R.id.navHorario);
-//        }
+    private void validarAsistencia(String contents) {
+
+        String info[] = contents.split("//"); //[0] - empresa / [1] - grupoHab / [2] - sesion / [3] - fecha sesion / [4] - Nombre grupo
+
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Asistencia")
+                .setMessage("¿Desea marcar asistencia para el grupo " + info[4] + "?")
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        marcarAsistencia(Integer.parseInt(info[0]), Integer.parseInt(info[1]), Integer.parseInt(info[2]), Long.parseLong(info[3]));
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+
+    }
+
+    private void marcarAsistencia(int iidempresa, int iidgrupohabilidades, int iidsesion, Long fsesion) {
+        Asistenciagrupo asistenciagrupo = new Asistenciagrupo();
+        asistenciagrupo.setIidempresa(iidempresa);
+        asistenciagrupo.setIidgrupohabilidades(iidgrupohabilidades);
+        asistenciagrupo.setIidsesion(iidsesion);
+        asistenciagrupo.setTfechasesion(fsesion);
+        asistenciagrupo.setIflagasistencia(1);
+        //TODO: Quitar información en duro
+        asistenciagrupo.setIidpaciente(8);
+
+        Call<ResponseWrapper> call = sAsistenciagrupo.insertaAsistenciaGrupoMovil(asistenciagrupo);
+        call.enqueue(new Callback<ResponseWrapper>() {
+            @Override
+            public void onResponse(Call<ResponseWrapper> call, Response<ResponseWrapper> response) {
+                if (response.isSuccessful()) {
+                    if (response.body().getEstado() == Constantes.VALTRANSOK)
+                        Constantes.alertSuccess(Constantes.NOTIFICACION, "Se marcó asistencia correctamente");
+                    else if (response.body().getEstado() == Constantes.VALTRANSERR)
+                        Constantes.alertInfo(Constantes.NOTIFICACION, "Usted no pertenece a este grupo");
+                    else
+                        Constantes.alertInfo(Constantes.NOTIFICACION, "Usted ya marcó asistencia anteriormente");
+                } else {
+                    Constantes.alertWarning(Constantes.NOTIFICACION, "Error al marcar asistencia");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseWrapper> call, Throwable t) {
+                Constantes.alertError(Constantes.PROBLEMA, "COMPRUEBE QUE TENGA CONEXIÓN A INTERNET");
+            }
+        });
     }
 
     private void obtenerViews() {
@@ -139,6 +196,11 @@ public class MainActivity extends AppCompatActivity implements AsistenciaFragmen
 //    public void cambiarFragment(Fragment fragment) {
 //        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_rigth_to_left, R.anim.exit_left_to_rigth).replace(R.id.fragmentMain, fragment).commit();
 //    }
+
+    private void retrofitInit() {
+        iAsistenciagrupo = IAsistenciagrupo.getInstance();
+        sAsistenciagrupo = iAsistenciagrupo.getService();
+    }
 
     @Override
     public String recibirQr() {

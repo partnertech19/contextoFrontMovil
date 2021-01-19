@@ -45,4 +45,5 @@
     <string name="txtSemanaHaClonar">Semana ha clonar</string>
     <string name="txtMsjDisponibilidad">No hay consultorios disponibles para este día, no es posible agregar un nuevo evento.</string>
     <string name="btnConfirmar">CONFIRMAR</string>
+    <string name="btnMarcarAsistencia">Marcar Asistencia</string>
 </resources>
