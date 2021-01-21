@@ -14,7 +14,9 @@ import android.widget.Spinner;
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.adapters.RecyclerAdapterAgenda;
 import com.app.partner.clinica.common.Constantes;
+import com.app.partner.clinica.common.SharedPreferencesManager;
 import com.app.partner.clinica.fragments.AgendaDialogFragment;
+import com.app.partner.clinica.models.request.Empleado;
 import com.app.partner.clinica.models.request.TerapiaEntrevista;
 import com.app.partner.clinica.models.request.Terapiaindividual;
 import com.app.partner.clinica.models.response.ResponseTerapiaEntrevista;
@@ -25,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AgendaActivity extends AppCompatActivity {
+
+    private Empleado empleado;
 
     private Spinner spnnFiltro;
     private RecyclerView rcyAgenda;
@@ -40,6 +44,7 @@ public class AgendaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agenda);
+        empleado = SharedPreferencesManager.getPrefEmpleado();
         retrofitInit();
         obtenerViews();
         eventosViews();
@@ -51,7 +56,7 @@ public class AgendaActivity extends AppCompatActivity {
 
     public void listarAgenda() {
         Terapiaindividual terapiaIndividual = new Terapiaindividual();
-        terapiaIndividual.setIiddoctor(9);
+        terapiaIndividual.setIiddoctor(empleado.getIidreferencia());
         terapiaIndividual.setTfechaterapia(this.fechaSeleccionada);
         Call<ResponseTerapiaEntrevista> call = sTerapiaIndividual.listarPorDoctorFecha(terapiaIndividual);
         call.enqueue(new Callback<ResponseTerapiaEntrevista>() {

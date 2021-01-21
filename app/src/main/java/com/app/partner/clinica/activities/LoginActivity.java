@@ -20,6 +20,7 @@ import com.app.partner.clinica.models.request.AgrupadorModulos;
 import com.app.partner.clinica.models.request.Empleado;
 import com.app.partner.clinica.models.request.Modulo;
 import com.app.partner.clinica.models.request.Pagina;
+import com.app.partner.clinica.models.request.Perfiles;
 import com.app.partner.clinica.models.response.ResponseAgrupadorModulos;
 import com.app.partner.clinica.models.response.ResponseEmpleado;
 import com.app.partner.clinica.models.response.ResponseModulo;
@@ -145,8 +146,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseEmpleado> call, Response<ResponseEmpleado> response) {
                 if (response.isSuccessful()) {
-                    Empleado empleado = (Empleado) response.body().getDefaultObj();
+                    Empleado empleado = response.body().getDefaultObj();
+                    Perfiles perfiles = empleado.getPerfiles();
                     SharedPreferencesManager.setPreferences(empleado);
+                    SharedPreferencesManager.setPreferences(perfiles);
                 } else {
                     Constantes.alertError(Constantes.PROBLEMA, "No se logró conseguir información del usuario");
                 }

@@ -29,7 +29,9 @@ import com.app.partner.clinica.activities.AgendaActivity;
 import com.app.partner.clinica.activities.CitaActivity;
 import com.app.partner.clinica.activities.MainActivity;
 import com.app.partner.clinica.common.Constantes;
+import com.app.partner.clinica.common.SharedPreferencesManager;
 import com.app.partner.clinica.models.request.Consultoriodoctor;
+import com.app.partner.clinica.models.request.Empleado;
 import com.app.partner.clinica.services.instance.IConsultorio;
 import com.app.partner.clinica.services.instance.ITerapiaIndividual;
 import com.app.partner.clinica.services.service.ConsultorioService;
@@ -39,6 +41,7 @@ import java.util.Calendar;
 
 public class HorarioDialogFragment extends BottomSheetDialogFragment {
 
+    Empleado empleado;
     Button btnVerAgenda, btnNuevaCita;
     CardView cdvDisponibilidad;
 
@@ -56,6 +59,7 @@ public class HorarioDialogFragment extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        empleado = SharedPreferencesManager.getPrefEmpleado();
         retrofitInit();
         View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_horario_dialog, null);
         obtenerViews(view);
@@ -81,7 +85,7 @@ public class HorarioDialogFragment extends BottomSheetDialogFragment {
 
     private void validarDisponibilidad() {
         Consultoriodoctor consultoriodoctor = new Consultoriodoctor();
-        consultoriodoctor.setIiddoctor(9);
+        consultoriodoctor.setIiddoctor(empleado.getIidreferencia());
         consultoriodoctor.setTfechainicio(fecha.getTime().getTime());
         Call<Boolean> call = sConsultorio.validarDisponibilidad(consultoriodoctor);
         call.enqueue(new Callback<Boolean>() {

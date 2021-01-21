@@ -27,6 +27,7 @@ public class Constantes {
     //Objetos
     public static final String KEY_EMPLEADO = "KEY_EMPLEADO";
     public static final String KEY_PAGINA = "KEY_PAGINA";
+    public static final String KEY_PERFIL = "KEY_PERFIL";
     public static final String KEY_RESPONSE_TOKEN = "KEY_RESPONSE_TOKEN";
 
     //URL_PAGINAS
@@ -37,6 +38,11 @@ public class Constantes {
     public static final Integer VALTRANSOK = 1;
     public static final Integer VALTRANSERR = 2;
     public static final Integer VALTRANSNOOK = 3;
+
+    //Perfiles
+    public static final String PERFILDOCTOR = "PRFDOCTOR";
+    public static final String PERFILALUMNO = "PRFALUMNO";
+    public static final String PERFILPACIENTE = "PRFPACIENTE";
 
     //TITULOS
     public static final String ACTUALIZAR = "ACTUALIZAR";

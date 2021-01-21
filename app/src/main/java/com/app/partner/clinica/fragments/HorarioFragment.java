@@ -18,6 +18,8 @@ import com.app.partner.clinica.R;
 import com.app.partner.clinica.activities.LoginActivity;
 import com.app.partner.clinica.activities.MainActivity;
 import com.app.partner.clinica.common.Constantes;
+import com.app.partner.clinica.common.SharedPreferencesManager;
+import com.app.partner.clinica.models.request.Empleado;
 import com.app.partner.clinica.models.request.TerapiaEntrevista;
 import com.app.partner.clinica.models.request.Terapiaindividual;
 import com.app.partner.clinica.models.response.ResponseTerapiaEntrevista;
@@ -33,6 +35,8 @@ import java.util.Calendar;
 import java.util.List;
 
 public class HorarioFragment extends Fragment {
+
+    private Empleado empleado;
 
     CalendarView cldHorario;
     TextView txtDia, txtMes, txtAnno;
@@ -51,6 +55,7 @@ public class HorarioFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        empleado = SharedPreferencesManager.getPrefEmpleado();
         retrofitInit();
         View view = inflater.inflate(R.layout.fragment_horario, container, false);
         obtenerViews(view);
@@ -112,7 +117,7 @@ public class HorarioFragment extends Fragment {
 
     private void agregarEventos(Calendar fecha) {
         Terapiaindividual terapiaIndividual = new Terapiaindividual();
-        terapiaIndividual.setIiddoctor(9);
+        terapiaIndividual.setIiddoctor(empleado.getIidreferencia());
         terapiaIndividual.setTfechaterapia(fecha.getTime().getTime());
 
         Call<ResponseTerapiaEntrevista> call = sTerapiaIndividual.retornarFechas(terapiaIndividual);

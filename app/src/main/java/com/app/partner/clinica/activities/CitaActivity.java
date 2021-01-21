@@ -57,6 +57,8 @@ import java.util.List;
 
 public class CitaActivity extends AppCompatActivity {
 
+    private Empleado empleado;
+
     private EditText edtPacienteNombre, edtCitaFecha, edtCitaHora, edtCitaNotas, edtCitaDuracion;
     private Button btnNuevaCita;
     private Spinner spnnTipoSesion, spnnConsultorio, spnnHorarioConsul;
@@ -95,6 +97,8 @@ public class CitaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cita);
+        empleado = SharedPreferencesManager.getPrefEmpleado();
+
         retrofitInit();
 
         Bundle extras = getIntent().getExtras();
@@ -120,7 +124,7 @@ public class CitaActivity extends AppCompatActivity {
     }
 
     private void listarPacientes() {
-        Call<ResponsePaciente> call = sPaciente.listarPorDoctor(4);
+        Call<ResponsePaciente> call = sPaciente.listarPorDoctor(empleado.getIidreferencia());
         call.enqueue(new Callback<ResponsePaciente>() {
             @Override
             public void onResponse(Call<ResponsePaciente> call, Response<ResponsePaciente> response) {
@@ -291,7 +295,7 @@ public class CitaActivity extends AppCompatActivity {
     }
 
     private void listarConsultorio() {
-        Call<ResponseConsultorio> call = sConsultorio.listarPorDoctor(9);
+        Call<ResponseConsultorio> call = sConsultorio.listarPorDoctor(empleado.getIidreferencia());
         call.enqueue(new Callback<ResponseConsultorio>() {
             @Override
             public void onResponse(Call<ResponseConsultorio> call, Response<ResponseConsultorio> response) {
@@ -492,8 +496,7 @@ public class CitaActivity extends AppCompatActivity {
 
     private void registrarTerapia() {
 //        Terapiaindividual terapiaindividual = new Terapiaindividual();
-        Empleado empleado = SharedPreferencesManager.getPrefEmpleado();
-        this.terapiaindividual.setIiddoctor(9);
+        this.terapiaindividual.setIiddoctor(empleado.getIidreferencia());
         this.terapiaindividual.setIidpaciente(pacientes.getIidpaciente());
         this.terapiaindividual.setTfechaterapia(fecha.getTime().getTime());
         this.terapiaindividual.setSnotas(edtCitaNotas.getText().toString());

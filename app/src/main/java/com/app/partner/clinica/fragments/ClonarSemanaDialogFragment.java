@@ -17,7 +17,9 @@ import android.widget.Spinner;
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.activities.CitaActivity;
 import com.app.partner.clinica.common.Constantes;
+import com.app.partner.clinica.common.SharedPreferencesManager;
 import com.app.partner.clinica.models.request.AgendaClonada;
+import com.app.partner.clinica.models.request.Empleado;
 import com.app.partner.clinica.models.request.MesSpinner;
 import com.app.partner.clinica.models.request.Terapiaindividual;
 import com.app.partner.clinica.models.response.ResponseTerapiaEntrevista;
@@ -37,6 +39,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ClonarSemanaDialogFragment extends BottomSheetDialogFragment {
+
+    private Empleado empleado;
 
     private Spinner spnnFechaIniClon, spnnAnnoClon, spnnMesClon, spnnFechaClon;
     private EditText edtFechaFinClon, edtFechaClon;
@@ -72,6 +76,8 @@ public class ClonarSemanaDialogFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        empleado = SharedPreferencesManager.getPrefEmpleado();
         retrofitInit();
         View view = inflater.inflate(R.layout.fragment_clonar_semana_dialog, container, false);
         obtenerViews(view);
@@ -131,7 +137,7 @@ public class ClonarSemanaDialogFragment extends BottomSheetDialogFragment {
 
     private void clonarSemana() {
         AgendaClonada agendaClonada = new AgendaClonada();
-        agendaClonada.setIiddoctor(9);
+        agendaClonada.setIiddoctor(empleado.getIidreferencia());
         agendaClonada.setTsemanainicio(fechaIniClon.getTimeInMillis());
         agendaClonada.setTsemanafin(fechaFinClon.getTimeInMillis());
         agendaClonada.setTsemanaclonada(fechaClon.getTimeInMillis());

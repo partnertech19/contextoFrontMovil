@@ -8,16 +8,19 @@ public class Doctores implements Serializable {
     private String snombre;
     private String sapepaterno;
     private String sapematerno;
+    private Long tfechanacimiento;
     private Integer iidtipodocumento;
     private Integer iidcategoriadoctor;
     private Integer iidtipo;
     private String snrodocumento;
     private String semail;
     private String smovil;
-    private Integer itarifaind;
-    private Integer iidprofesion;
+    private Double dtarifaind;
+    private Integer iidprofesion;// Psicologo(Terapeuta):0, Psiquiatra:1
     private Integer iidempresa;
     private Integer iidservicio;
+    private Double dtarifagrupo;
+    private Integer accion;
 //    private Categoriadoctor categoriadoctor;
 
     public Integer getIiddoctor() {
@@ -100,14 +103,6 @@ public class Doctores implements Serializable {
         this.smovil = smovil;
     }
 
-    public Integer getItarifaind() {
-        return itarifaind;
-    }
-
-    public void setItarifaind(Integer itarifaind) {
-        this.itarifaind = itarifaind;
-    }
-
     public Integer getIidprofesion() {
         return iidprofesion;
     }
@@ -130,5 +125,37 @@ public class Doctores implements Serializable {
 
     public void setIidservicio(Integer iidservicio) {
         this.iidservicio = iidservicio;
+    }
+
+    public Long getTfechanacimiento() {
+        return tfechanacimiento;
+    }
+
+    public void setTfechanacimiento(Long tfechanacimiento) {
+        this.tfechanacimiento = tfechanacimiento;
+    }
+
+    public Double getDtarifaind() {
+        return dtarifaind;
+    }
+
+    public void setDtarifaind(Double dtarifaind) {
+        this.dtarifaind = dtarifaind;
+    }
+
+    public Double getDtarifagrupo() {
+        return dtarifagrupo;
+    }
+
+    public void setDtarifagrupo(Double dtarifagrupo) {
+        this.dtarifagrupo = dtarifagrupo;
+    }
+
+    public Integer getAccion() {
+        return accion;
+    }
+
+    public void setAccion(Integer accion) {
+        this.accion = accion;
     }
 }

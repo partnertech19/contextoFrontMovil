@@ -11,7 +11,7 @@
         android:id="@+id/imgCerrarSesionAsistencia"
         android:layout_width="35dp"
         android:layout_height="40dp"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:clickable="true"
         android:src="@drawable/icon_cerrar_sesion"

@@ -6,6 +6,9 @@ public class Pacientes implements Serializable {
 
     private Integer iidpaciente;
     private String snombre;
+    private String sapepaterno;
+    private String sapematerno;
+    private Long tfechanacimiento;
     private Integer iidtipodocumento;
     private String snrodocumento;
     private String sdireccion;
@@ -16,19 +19,19 @@ public class Pacientes implements Serializable {
     private Integer iidtipodocfacturacion;
     private Integer iidterapeuta;
     private Integer iidpsiquiatra;
-    private Boolean bflagsocial;  // 1
-    private Long tfechainicioterapeuta;
-    private Long tfechafinterapeuta;
-    private Long tfechainiciopsi;
-    private Long tfechafinpsi;
-    private Double dtarifasocialindterapeuta;
-    private Double dporcentsocialindcentroterapeuta;
-    private Double dtarifasocialgrupterapeuta;
-    private Double dporcentsocialgrupcentroterapeuta;
-    private Double dtarifasocialindpsi;
-    private Double dporcentsocialindcentropsi;
-    private Double dtarifasocialgruppsi;
-    private Double dporcentsocialgrupcentropsi;
+    private Boolean bflagsocial; // true:si |false:no
+    private Long tfechainicioterapeuta; // fecha ini tarifa social terapeuta
+    private Long tfechafinterapeuta;// fecha fin tarifa social terapeuta
+    private Long tfechainiciopsi;// fecha ini tarifa social psiquiatra
+    private Long tfechafinpsi;// fecha fin tarifa social psiquiatra
+    private Double dtarifasocialindterapeuta; // tarifa social grupo terapeuta
+    private Double dporcentsocialindcentroterapeuta;// porcentaje al centro por tarifa social de terapia // indiv(terapeuta)
+    private Double dtarifasocialgrupterapeuta;// tarifa social grupo terapeuta
+    private Double dporcentsocialgrupcentroterapeuta;// porcentaje al centro por tarifa social de grupo(terapeuta)
+    private Double dtarifasocialindpsi;// tarifa social terapia indiv psiquiatra
+    private Double dporcentsocialindcentropsi;// porcentaje al centro por tarifa social de terapia indiv(psiquiatra)
+    private Double dtarifasocialgruppsi;// tarifa social grupal psiquiatra
+    private Double dporcentsocialgrupcentropsi; // porcentaje al centro por tarifa social de grupo (psiquiatra)
     private Integer iflaggrupo;
     private String snombrereceptorfacturacion;
     private Boolean bllevagrupo;
@@ -38,6 +41,8 @@ public class Pacientes implements Serializable {
     private Integer iidentrevista; // contenedor
     private Integer iidubigeo;
     private Ubigeo ubigeo;
+    private Integer iidtiporeferencia;
+    private Long tfechaactual;
 
     public Integer getIidpaciente() {
         return iidpaciente;
@@ -309,5 +314,45 @@ public class Pacientes implements Serializable {
 
     public void setUbigeo(Ubigeo ubigeo) {
         this.ubigeo = ubigeo;
+    }
+
+    public String getSapepaterno() {
+        return sapepaterno;
+    }
+
+    public void setSapepaterno(String sapepaterno) {
+        this.sapepaterno = sapepaterno;
+    }
+
+    public String getSapematerno() {
+        return sapematerno;
+    }
+
+    public void setSapematerno(String sapematerno) {
+        this.sapematerno = sapematerno;
+    }
+
+    public Long getTfechanacimiento() {
+        return tfechanacimiento;
+    }
+
+    public void setTfechanacimiento(Long tfechanacimiento) {
+        this.tfechanacimiento = tfechanacimiento;
+    }
+
+    public Integer getIidtiporeferencia() {
+        return iidtiporeferencia;
+    }
+
+    public void setIidtiporeferencia(Integer iidtiporeferencia) {
+        this.iidtiporeferencia = iidtiporeferencia;
+    }
+
+    public Long getTfechaactual() {
+        return tfechaactual;
+    }
+
+    public void setTfechaactual(Long tfechaactual) {
+        this.tfechaactual = tfechaactual;
     }
 }

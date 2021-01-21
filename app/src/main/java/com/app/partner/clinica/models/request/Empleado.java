@@ -1,8 +1,9 @@
 package com.app.partner.clinica.models.request;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Empleado {
+public class Empleado implements Serializable {
 
     private Integer id;
     private String apellido_paterno;
@@ -18,15 +19,15 @@ public class Empleado {
     private String fechacumpleaniosStr;
     private Integer idarea;
     private Integer idcargo;
-    //    private Sutipodocumentoidentidad sutipodocumentoidentidad;
+//    private Sutipodocumentoidentidad sutipodocumentoidentidad;
     private String documentoidentidad;
     private Integer idsutipodocumentoidentidad;
     private Integer estadoregistrado;
     private Integer idempresa;
     private Integer idtipoempleado;
-    //    private List<Empresa> lsEmpresasEmpleado;
+//    private List<Empresa> lsEmpresasEmpleado;
 //    private Tipoempleado tipoempleado;
-//    private Perfiles perfiles;
+    private Perfiles perfiles;
     private Integer idperfiles;
     private String username;
     private String role;
@@ -35,6 +36,7 @@ public class Empleado {
     private String foto;
     private Integer idlocal;
     private Boolean estadochat;
+    private Integer iidreferencia; // id: doctor, alumno, paciente
 
     public Integer getId() {
         return id;
@@ -250,5 +252,21 @@ public class Empleado {
 
     public void setEstadochat(Boolean estadochat) {
         this.estadochat = estadochat;
+    }
+
+    public Perfiles getPerfiles() {
+        return perfiles;
+    }
+
+    public void setPerfiles(Perfiles perfiles) {
+        this.perfiles = perfiles;
+    }
+
+    public Integer getIidreferencia() {
+        return iidreferencia;
+    }
+
+    public void setIidreferencia(Integer iidreferencia) {
+        this.iidreferencia = iidreferencia;
     }
 }

@@ -13,7 +13,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.app.partner.clinica.R;
 import com.app.partner.clinica.common.Constantes;
@@ -21,32 +20,36 @@ import com.app.partner.clinica.common.SharedPreferencesManager;
 import com.app.partner.clinica.fragments.AsistenciaFragment;
 import com.app.partner.clinica.fragments.HorarioFragment;
 import com.app.partner.clinica.models.request.Asistenciagrupo;
+import com.app.partner.clinica.models.request.Empleado;
 import com.app.partner.clinica.models.request.Pagina;
+import com.app.partner.clinica.models.request.Perfiles;
 import com.app.partner.clinica.models.response.ResponseWrapper;
-import com.app.partner.clinica.services.instance.IAsistenciagrupo;
-import com.app.partner.clinica.services.instance.ITerapiaIndividual;
-import com.app.partner.clinica.services.service.AsistenciagrupoService;
+import com.app.partner.clinica.services.instance.IAsistencia;
+import com.app.partner.clinica.services.service.AsistenciaService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.util.Calendar;
-
 public class MainActivity extends AppCompatActivity implements AsistenciaFragment.AsistenciaFragmentListener {
+
+    private Empleado empleado;
+    private Perfiles perfil;
 
     public BottomNavigationView btnNav;
     private Fragment horarioFragment, asistenciaFragment;
 
     public String qr = "";
 
-    private IAsistenciagrupo iAsistenciagrupo;
-    private AsistenciagrupoService sAsistenciagrupo;
+    private IAsistencia iAsistencia;
+    private AsistenciaService sAsistencia;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        empleado = SharedPreferencesManager.getPrefEmpleado();
+        perfil = SharedPreferencesManager.getPrefPerfil();
         if (savedInstanceState == null) {
             setFragmentDefecto();
         }
@@ -96,7 +99,13 @@ public class MainActivity extends AppCompatActivity implements AsistenciaFragmen
                 .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
-                        marcarAsistencia(Integer.parseInt(info[0]), Integer.parseInt(info[1]), Integer.parseInt(info[2]), Long.parseLong(info[3]));
+                        if (perfil.getScodigo().equals(Constantes.PERFILPACIENTE)) {
+                            marcarAsistenciaGrupo(Integer.parseInt(info[0]), Integer.parseInt(info[1]), Integer.parseInt(info[2]), Long.parseLong(info[3]));
+                        } else if (perfil.getScodigo().equals(Constantes.PERFILALUMNO)) {
+                            Constantes.alertInfo(Constantes.INFORMACION, "Proximanente");
+                        } else{
+                            Constantes.alertWarning(Constantes.PROBLEMA, "Su perfíl no permite marcar asistencia");
+                        }
                         dialog.dismiss();
                     }
                 })
@@ -104,17 +113,16 @@ public class MainActivity extends AppCompatActivity implements AsistenciaFragmen
 
     }
 
-    private void marcarAsistencia(int iidempresa, int iidgrupohabilidades, int iidsesion, Long fsesion) {
+    private void marcarAsistenciaGrupo(int iidempresa, int iidgrupohabilidades, int iidsesion, Long fsesion) {
         Asistenciagrupo asistenciagrupo = new Asistenciagrupo();
         asistenciagrupo.setIidempresa(iidempresa);
         asistenciagrupo.setIidgrupohabilidades(iidgrupohabilidades);
         asistenciagrupo.setIidsesion(iidsesion);
         asistenciagrupo.setTfechasesion(fsesion);
         asistenciagrupo.setIflagasistencia(1);
-        //TODO: Quitar información en duro
-        asistenciagrupo.setIidpaciente(8);
+        asistenciagrupo.setIidpaciente(empleado.getIidreferencia());
 
-        Call<ResponseWrapper> call = sAsistenciagrupo.insertaAsistenciaGrupoMovil(asistenciagrupo);
+        Call<ResponseWrapper> call = sAsistencia.insertaAsistenciaGrupoMovil(asistenciagrupo);
         call.enqueue(new Callback<ResponseWrapper>() {
             @Override
             public void onResponse(Call<ResponseWrapper> call, Response<ResponseWrapper> response) {
@@ -198,8 +206,8 @@ public class MainActivity extends AppCompatActivity implements AsistenciaFragmen
 //    }
 
     private void retrofitInit() {
-        iAsistenciagrupo = IAsistenciagrupo.getInstance();
-        sAsistenciagrupo = iAsistenciagrupo.getService();
+        iAsistencia = IAsistencia.getInstance();
+        sAsistencia = iAsistencia.getService();
     }
 
     @Override
